@@ -1,0 +1,43 @@
+{
+  "ads-in": {
+      "label": {
+          "datasource": "Datasource",
+          "varName": "variable name",
+          "varTyp": "variable type",
+          "transmissionMode": "transmission mode",
+          "maxDelay": "max delay [ms]",
+          "cycleTime": "cycle time [ms]"
+      },
+      "placeholder": {
+          "maxDelay": "Latest time (in ms) after which the event has finished",
+          "cycleTime": "Time (in ms) after which the PLC server checks whether the variable has changed"
+      },
+      "varTyp": {
+        "BOOL": "BOOL",
+        "BYTE": "BYTE",
+        "WORD": "WORD",
+        "DWORD": "DWORD",
+        "SINT": "SINT",
+        "USINT": "USINT",
+        "INT": "INT",
+        "UINT": "UINT",
+        "DINT": "DINT",
+        "UDINT": "UDINT",
+        "LINT": "LINT",
+        "ULINT": "ULINT",
+        "REAL": "REAL",
+        "LREAL": "LREAL",
+        "TIME": "TIME",
+        "TIME_OF_DAY": "TIME_OF_DAY",
+        "TOD": "TOD",
+        "DATE": "DATE",
+        "DATE_AND_TIME": "DATE_AND_TIME",
+        "DT": "DT",
+        "STRING": "STRING"
+      },
+      "transmissionMode": {
+        "ONCHANGE": "ONCHANGE",
+        "CYLCIC": "CYLCIC"
+      } 
+    }
+}

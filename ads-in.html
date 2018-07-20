@@ -1,0 +1,106 @@
+<script type="text/x-red" data-help-name="ads-in">
+    <p>Node to provide data from Beckhoff TwinCAT ADS</p>
+</script>
+
+<script type="text/x-red" data-template-name="ads-in">
+    <div class="form-row">
+        <label for="node-input-datasource"><i class="fa fa-random"></i> <span data-i18n="ads-in.label.datasource"></span></label>
+        <input type="text" id="node-input-datasource">
+    </div>
+    <div class="form-row">
+        <label for="node-input-varName"><i class="fa fa-tag"></i> <span data-i18n="ads-in.label.varName"></span></label>
+        <input type="text" id="node-input-varName" data-i18n="[placeholder]ads-in.label.varName">
+    </div>
+    <div class="form-row">
+        <label for="node-input-varTyp"><i class="fa fa-file-text-o"></i> <span data-i18n="ads-in.label.varTyp"></span></label>
+        <select id="node-input-varTyp">
+            <option value="BOOL" data-i18n="ads-in.varTyp.BOOL"></option>
+            <option value="BYTE" data-i18n="ads-in.varTyp.BYTE"></option>
+            <option value="WORD" data-i18n="ads-in.varTyp.WORD"></option>
+            <option value="DWORD" data-i18n="ads-in.varTyp.DWORD"></option>
+            <option value="SINT" data-i18n="ads-in.varTyp.SINT"></option>
+            <option value="USINT" data-i18n="ads-in.varTyp.USINT"></option>
+            <option value="INT" data-i18n="ads-in.varTyp.INT"></option>
+            <option value="UINT" data-i18n="ads-in.varTyp.UINT"></option>
+            <option value="DINT" data-i18n="ads-in.varTyp.DINT"></option>
+            <option value="UDINT" data-i18n="ads-in.varTyp.UDINT"></option>
+            <option value="LINT" data-i18n="ads-in.varTyp.LINT"></option>
+            <option value="ULINT" data-i18n="ads-in.varTyp.ULINT"></option>
+            <option value="REAL" data-i18n="ads-in.varTyp.REAL"></option>
+            <option value="LREAL" data-i18n="ads-in.varTyp.LREAL"></option>
+            <option value="TIME" data-i18n="ads-in.varTyp.TIME"></option>
+            <option value="TIME_OF_DAY" data-i18n="ads-in.varTyp.TIME_OF_DAY"></option>
+            <option value="TOD" data-i18n="ads-in.varTyp.TOD"></option>
+            <option value="DATE" data-i18n="ads-in.varTyp.DATE"></option>
+            <option value="DATE_AND_TIME" data-i18n="ads-in.varTyp.DATE_AND_TIME"></option>
+            <option value="DT" data-i18n="ads-in.varTyp.DT"></option>
+            <option value="STRING" data-i18n="ads-in.varTyp.STRING"></option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-transmissionMode"><i class="fa fa-file-text-o"></i> <span data-i18n="ads-in.label.transmissionMode"></span></label>
+        <select id="node-input-transmissionMode">
+            <option value="ONCHANGE" data-i18n="ads-in.transmissionMode.ONCHANGE"></option>
+            <option value="CYLCIC" data-i18n="ads-in.transmissionMode.CYLCIC"></option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxDelay"><i class="fa fa-clock-o"></i> <span data-i18n="ads-in.label.maxDelay"></span></label>
+        <input type="number" id="node-input-maxDelay" data-i18n="[placeholder]ads-in.label.maxDelay">
+    </div> 
+    <div class="form-row">
+        <label for="node-input-cycleTime"><i class="fa fa-clock-o"></i> <span data-i18n="ads-in.label.cycleTime"></span></label>
+        <input type="number" id="node-input-cycleTime" data-i18n="[placeholder]ads-in.label.cycleTime">
+    </div> 
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("ads-in", {
+        category: "Beckhoff SPS",
+        color: "#E9967A",
+        defaults: {
+            name: {
+                name: ""
+            },
+            datasource: {
+                type: "ads-connection",
+                required: true
+            },
+            varName: {
+                value: "",
+                required: true
+            },
+            varTyp: {
+                value: "",
+                required: true
+            },
+            transmissionMode: {
+                value: "ONCHANGE",
+                required: true
+            },
+            maxDelay: {
+                value: 0,
+                required: true,  
+                validate:RED.validators.number()
+            },
+            cycleTime: {
+                value: 10,
+                required: true,  
+                validate:RED.validators.number()
+            }
+        },
+        inputs: 0,
+        outputs: 1,
+        icon: "tcat.png",
+        label: function () {
+            return this.name || "ads-in";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+</script>

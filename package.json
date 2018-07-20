@@ -1,0 +1,76 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "node-red-contrib-ads@0.1.0",
+        "scope": null,
+        "escapedName": "node-red-contrib-ads",
+        "name": "node-red-contrib-ads",
+        "rawSpec": "0.1.0",
+        "spec": "0.1.0",
+        "type": "version"
+      },
+      "/data"
+    ]
+  ],
+  "_from": "node-red-contrib-ads@0.1.0",
+  "_id": "node-red-contrib-ads@0.0.1",
+  "_inCache": true,
+  "_location": "/node-red-contrib-ads",
+  "_npmUser": {
+    "name": "chrishanuta",
+    "email": "npm@traeger-welt.de"
+  },   
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "node-red-contrib-ads@0.1.0",
+	"escapedName": "node-red-contrib-ads",
+	"name": "node-red-contrib-ads",
+	"rawSpec": "0.1.0",
+	"spec": "0.1.0",
+	"type": "version"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "file:node_modules/node-red-contrib-ads",
+  "_shasum": "8dda141c9cf50f4333b2f386ea085c6065b7641b",
+  "_shrinkwrap": null,
+  "_spec": "node_modules/node-red-contrib-ads/",
+  "_where": "/data",
+  "keywords": [
+    "ads",
+    "beckhoff",
+    "plc",
+    "home",
+    "automation"
+  ],   
+  "author": {
+    "name": "Chris Traeger"
+  },
+  "dependencies": {
+    "node-ads": "^1.1.4"
+  },
+  "description": "Beckhoff TwinCAT ADS",
+  "devDependencies": {},
+  "license": "ISC",
+  "main": "ads-in.js",
+  "name": "node-red-contrib-ads",
+  "node-red": {
+    "nodes": {
+      "ads-in": "ads-in.js",
+      "ads-connection": "ads-connection.js"
+    }
+  },
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChrisHanuta/node-red-contrib-ads.git"
+  }, 
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "0.1.0"
+}
