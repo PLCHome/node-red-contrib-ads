@@ -1,18 +1,18 @@
 module.exports = function (RED) {
   'use strict';
   var nodeads = require('node-ads');
-  var util = require('util'); 
+  var util = require('util');
 
-  function AdsConnectionNode(n) {
-    console.log(n);
-    RED.nodes.createNode(this, n);
+  function AdsConnectionNode(config) {
+    console.log(config);
+    RED.nodes.createNode(this, config);
     var node = this;
-    node.host = n.host;
-    node.amsNetIdTarget = n.amsNetIdTarget;
-    node.amsNetIdSource = n.amsNetIdSource;
-    node.port = parseInt(n.port);
-    node.amsPortSource = parseInt(n.amsPortSource);
-    node.amsPortTarget = parseInt(n.amsPortTarget);
+    node.host = config.host;
+    node.amsNetIdTarget = config.amsNetIdTarget;
+    node.amsNetIdSource = config.amsNetIdSource;
+    node.port = parseInt(config.port);
+    node.amsPortSource = parseInt(config.amsPortSource);
+    node.amsPortTarget = parseInt(config.amsPortTarget);
     var adsoptions = {
       "host": node.host,
       "amsNetIdTarget": node.amsNetIdTarget,
@@ -20,7 +20,7 @@ module.exports = function (RED) {
       "port": node.port,
       "amsPortSource": node.amsPortSource,
       "amsPortTarget": node.amsPortTarget
-    }; 
+    };
     node.adsCalls = {};
     node.adsClient = nodeads.connect(adsoptions, initAds);
     node.adsClient.on('notification', receiveAdsNotification);
@@ -35,13 +35,24 @@ module.exports = function (RED) {
       node.log(util.format('Ads Notification %s:%s', handle.symname, ''+handle.value));
     };
     function adsError(error) {
-      node.log(util.format('Error ADS: %s', error));
+      if (error) node.log(util.format('Error ADS: %s', error));
     };
-    node.subscribe = function (symname,adstype,cb) {
-      node.adsCalls[symname] = cb;
+    node.subscribe = function (nodecfg,cb) {
+      node.adsCalls[nodecfg.symname] = cb;
       node.adsClient.notify({
-          symname: symname,
-          bytelength: nodeads[adstype]});
+          symname: nodecfg.symname,
+          bytelength: nodeads[nodecfg.adstype],
+          transmissionMode: nodeads.NOTIFY[nodecfg.transmissionMode],
+          maxDelay: nodecfg.maxDelay,
+          cycleTime: nodecfg.cycleTime});
+    };
+    node.write = function (nodecfg, value) {
+      node.adsClient.write({
+          symname: nodecfg.symname,
+          bytelength: nodeads[nodecfg.adstype],
+          propname: 'value',
+          value: value}, 
+          adsError);
     };
     node.unsubscribe = function (symname) {
       delete node.adsCalls[symname];

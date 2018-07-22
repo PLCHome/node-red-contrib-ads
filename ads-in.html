@@ -41,7 +41,7 @@
         <label for="node-input-transmissionMode"><i class="fa fa-file-text-o"></i> <span data-i18n="ads-in.label.transmissionMode"></span></label>
         <select id="node-input-transmissionMode">
             <option value="ONCHANGE" data-i18n="ads-in.transmissionMode.ONCHANGE"></option>
-            <option value="CYLCIC" data-i18n="ads-in.transmissionMode.CYLCIC"></option>
+            <option value="CYCLIC" data-i18n="ads-in.transmissionMode.CYCLIC"></option>
         </select>
     </div>
     <div class="form-row">
@@ -60,8 +60,8 @@
 
 <script type="text/javascript">
     RED.nodes.registerType("ads-in", {
-        category: "Beckhoff SPS",
-        color: "#E9967A",
+        category: "Beckhoff PLC",
+        color: "#00cc00",
         defaults: {
             name: {
                 name: ""

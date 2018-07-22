@@ -1,0 +1,85 @@
+<script type="text/x-red" data-help-name="ads-out">
+    <p>Node to provide data from Beckhoff TwinCAT ADS</p>
+</script>
+
+<script type="text/x-red" data-template-name="ads-out">
+    <div class="form-row">
+        <label for="node-input-datasource"><i class="fa fa-random"></i> <span data-i18n="ads-out.label.datasource"></span></label>
+        <input type="text" id="node-input-datasource">
+    </div>
+    <div class="form-row">
+        <label for="node-input-varName"><i class="fa fa-tag"></i> <span data-i18n="ads-out.label.varName"></span></label>
+        <input type="text" id="node-input-varName" data-i18n="[placeholder]ads-out.label.varName">
+    </div>
+    <div class="form-row">
+        <label for="node-input-varTyp"><i class="fa fa-file-text-o"></i> <span data-i18n="ads-out.label.varTyp"></span></label>
+        <select id="node-input-varTyp">
+            <option value="BOOL" data-i18n="ads-out.varTyp.BOOL"></option>
+            <option value="BYTE" data-i18n="ads-out.varTyp.BYTE"></option>
+            <option value="WORD" data-i18n="ads-out.varTyp.WORD"></option>
+            <option value="DWORD" data-i18n="ads-out.varTyp.DWORD"></option>
+            <option value="SINT" data-i18n="ads-out.varTyp.SINT"></option>
+            <option value="USINT" data-i18n="ads-out.varTyp.USINT"></option>
+            <option value="INT" data-i18n="ads-out.varTyp.INT"></option>
+            <option value="UINT" data-i18n="ads-out.varTyp.UINT"></option>
+            <option value="DINT" data-i18n="ads-out.varTyp.DINT"></option>
+            <option value="UDINT" data-i18n="ads-out.varTyp.UDINT"></option>
+            <option value="LINT" data-i18n="ads-out.varTyp.LINT"></option>
+            <option value="ULINT" data-i18n="ads-out.varTyp.ULINT"></option>
+            <option value="REAL" data-i18n="ads-out.varTyp.REAL"></option>
+            <option value="LREAL" data-i18n="ads-out.varTyp.LREAL"></option>
+            <option value="TIME" data-i18n="ads-out.varTyp.TIME"></option>
+            <option value="TIME_OF_DAY" data-i18n="ads-out.varTyp.TIME_OF_DAY"></option>
+            <option value="TOD" data-i18n="ads-out.varTyp.TOD"></option>
+            <option value="DATE" data-i18n="ads-out.varTyp.DATE"></option>
+            <option value="DATE_AND_TIME" data-i18n="ads-out.varTyp.DATE_AND_TIME"></option>
+            <option value="DT" data-i18n="ads-out.varTyp.DT"></option>
+            <option value="STRING" data-i18n="ads-out.varTyp.STRING"></option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-outValue"><i class="fa fa-tag"></i> <span data-i18n="ads-out.label.outValue"></span></label>
+        <input type="text" id="node-input-outValue" data-i18n="[placeholder]ads-out.label.outValue">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("ads-out", {
+        category: "Beckhoff PLC",
+        color: "#00cc00",
+        defaults: {
+            name: {
+                name: ""
+            },
+            datasource: {
+                type: "ads-connection",
+                required: true
+            },
+            varName: {
+                value: "",
+                required: true
+            },
+            varTyp: {
+                value: "",
+                required: true
+            },
+            outValue: {
+                value: "payload",
+                required: true
+            }
+        },
+        inputs: 1,
+        outputs: 0,
+        icon: "tcat.png",
+        label: function () {
+            return this.name || "ads-out";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+</script>

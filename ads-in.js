@@ -1,5 +1,6 @@
 module.exports = function (RED) {
   'use strict';
+//  var util = require('util');
 
   function adsInNode(config) {
     RED.nodes.createNode(this, config);
@@ -7,12 +8,14 @@ module.exports = function (RED) {
 
     node.adsDatasource = RED.nodes.getNode(config.datasource);
     if (node.adsDatasource) {
-      node.varName= config.varName;
-      node.varTyp= config.varTyp;
-      node.transmissionMode = config.transmissionMode;
-      node.maxDelay = config.maxDelay;
-      node.cycleTime = config.cycleTime;
-      
+      var adscfg = {
+        symname: config.varName,
+        adstype: config.varTyp,
+        transmissionMode: config.transmissionMode,
+        maxDelay: config.maxDelay,
+        cycleTime: config.cycleTime
+      };
+
       function onAdsData(handle){
         const msg = {
           payload: handle.value
@@ -20,10 +23,10 @@ module.exports = function (RED) {
         node.send(msg);
       }
 
-      node.adsDatasource.subscribe(node.varName, node.varTyp, onAdsData);
-      
+      node.adsDatasource.subscribe(adscfg, onAdsData);
+
       node.on('close', function () {
-        node.adsDatasource.unsubscribe(node.varName);
+        node.adsDatasource.unsubscribe(adscfg.symname);
       });
     }
   }

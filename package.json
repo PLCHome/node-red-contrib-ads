@@ -2,33 +2,33 @@
   "_args": [
     [
       {
-        "raw": "node-red-contrib-ads@0.1.0",
+        "raw": "node-red-contrib-ads@0.1.1",
         "scope": null,
         "escapedName": "node-red-contrib-ads",
         "name": "node-red-contrib-ads",
-        "rawSpec": "0.1.0",
-        "spec": "0.1.0",
+        "rawSpec": "0.1.1",
+        "spec": "0.1.1",
         "type": "version"
       },
       "/data"
     ]
   ],
-  "_from": "node-red-contrib-ads@0.1.0",
-  "_id": "node-red-contrib-ads@0.0.1",
+  "_from": "node-red-contrib-ads@0.1.1",
+  "_id": "node-red-contrib-ads@0.1.1",
   "_inCache": true,
   "_location": "/node-red-contrib-ads",
   "_npmUser": {
     "name": "chrishanuta",
     "email": "npm@traeger-welt.de"
-  },   
+  },
   "_phantomChildren": {},
   "_requested": {
-    "raw": "node-red-contrib-ads@0.1.0",
-	"escapedName": "node-red-contrib-ads",
-	"name": "node-red-contrib-ads",
-	"rawSpec": "0.1.0",
-	"spec": "0.1.0",
-	"type": "version"
+    "raw": "node-red-contrib-ads@0.1.1",
+    "escapedName": "node-red-contrib-ads",
+    "name": "node-red-contrib-ads",
+    "rawSpec": "0.1.1",
+    "spec": "0.1.1",
+    "type": "version"
   },
   "_requiredBy": [
     "#USER",
@@ -45,7 +45,7 @@
     "plc",
     "home",
     "automation"
-  ],   
+  ],
   "author": {
     "name": "Chris Traeger"
   },
@@ -60,6 +60,7 @@
   "node-red": {
     "nodes": {
       "ads-in": "ads-in.js",
+      "ads-out": "ads-out.js",
       "ads-connection": "ads-connection.js"
     }
   },
@@ -68,9 +69,9 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ChrisHanuta/node-red-contrib-ads.git"
-  }, 
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "0.1.0"
+  "version": "0.1.1"
 }
