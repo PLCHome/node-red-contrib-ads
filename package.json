@@ -1,77 +1,42 @@
 {
-  "_args": [
-    [
-      {
-        "raw": "node-red-contrib-ads@0.1.1",
-        "scope": null,
-        "escapedName": "node-red-contrib-ads",
-        "name": "node-red-contrib-ads",
-        "rawSpec": "0.1.1",
-        "spec": "0.1.1",
-        "type": "version"
-      },
-      "/data"
-    ]
-  ],
-  "_from": "node-red-contrib-ads@0.1.1",
-  "_id": "node-red-contrib-ads@0.1.1",
-  "_inCache": true,
-  "_location": "/node-red-contrib-ads",
-  "_npmUser": {
-    "name": "chrishanuta",
-    "email": "npm@traeger-welt.de"
+  "name": "node-red-contrib-ads",
+  "version": "0.1.1",
+  "description": "Beckhoff TwinCAT ADS",
+  "license": "MIT",
+  "dependencies": {
+    "node-ads": "^1.2.0"
   },
-  "_phantomChildren": {},
-  "_requested": {
-    "raw": "node-red-contrib-ads@0.1.1",
-    "escapedName": "node-red-contrib-ads",
-    "name": "node-red-contrib-ads",
-    "rawSpec": "0.1.1",
-    "spec": "0.1.1",
-    "type": "version"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ChrisHanuta/node-red-contrib-ads.git"
   },
-  "_requiredBy": [
-    "#USER",
-    "/"
-  ],
-  "_resolved": "file:node_modules/node-red-contrib-ads",
-  "_shasum": "8dda141c9cf50f4333b2f386ea085c6065b7641b",
-  "_shrinkwrap": null,
-  "_spec": "node_modules/node-red-contrib-ads/",
-  "_where": "/data",
   "keywords": [
+    "node-red",
     "ads",
     "beckhoff",
     "plc",
+    "sps",
     "home",
     "automation"
   ],
-  "author": {
-    "name": "Chris Traeger"
-  },
-  "dependencies": {
-    "node-ads": "^1.1.4"
-  },
-  "description": "Beckhoff TwinCAT ADS",
-  "devDependencies": {},
-  "license": "ISC",
-  "main": "ads-in.js",
-  "name": "node-red-contrib-ads",
   "node-red": {
     "nodes": {
+      "ads-notification": "ads-notification.js",
       "ads-in": "ads-in.js",
       "ads-out": "ads-out.js",
+      "ads-system": "ads-system.js",
       "ads-connection": "ads-connection.js"
     }
   },
-  "optionalDependencies": {},
-  "readme": "ERROR: No README data found!",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/ChrisHanuta/node-red-contrib-ads.git"
+  "author": {
+    "name": "Chris Traeger"
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "version": "0.1.1"
+  "bundleDependencies": false,
+  "deprecated": false,
+  "devDependencies": {},
+  "homepage": "https://github.com/ChrisHanuta/node-red-contrib-ads#readme",
+  "optionalDependencies": {}
 }

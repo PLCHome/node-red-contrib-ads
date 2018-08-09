@@ -1,0 +1,9 @@
+{
+  "ads-system": {
+      "label": {
+          "datasource": "Datasource"
+      },
+      "placeholder": {
+      }
+    }
+}

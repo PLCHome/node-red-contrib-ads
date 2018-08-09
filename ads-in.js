@@ -1,6 +1,6 @@
 module.exports = function (RED) {
   'use strict';
-//  var util = require('util');
+   var util = require('util');
 
   function adsInNode(config) {
     RED.nodes.createNode(this, config);
@@ -8,27 +8,25 @@ module.exports = function (RED) {
 
     node.adsDatasource = RED.nodes.getNode(config.datasource);
     if (node.adsDatasource) {
-      var adscfg = {
-        symname: config.varName,
-        adstype: config.varTyp,
-        transmissionMode: config.transmissionMode,
-        maxDelay: config.maxDelay,
-        cycleTime: config.cycleTime
-      };
+      node.symname = config.varName;
+      node.adstype = config.varTyp;
+      node.bytelength = config.varSize;
+      node.timezone = config.timezone;
 
-      function onAdsData(handle){
+      node.onAdsData = function (handle){
         const msg = {
           payload: handle.value
         };
         node.send(msg);
       }
 
-      node.adsDatasource.subscribe(adscfg, onAdsData);
+      this.on("input", function(msg) { 
+        node.adsDatasource.read(node,node.onAdsData);
+      }); 
 
       node.on('close', function () {
-        node.adsDatasource.unsubscribe(adscfg.symname);
       });
     }
   }
-  RED.nodes.registerType('ads-in', adsInNode);
+  RED.nodes.registerType('ADS In', adsInNode);
 }

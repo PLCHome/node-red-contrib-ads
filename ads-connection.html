@@ -1,45 +1,63 @@
 <script type="text/x-red" data-template-name="ads-connection">
     <div class="form-row">
-        <label for="node-config-input-host"><i class="fa fa-tag"></i> <span data-i18n="ads-connection.label.host"></span></label>
+        <label for="node-config-input-host"><i class="fa fa-globe"></i> <span data-i18n="ads-connection.label.host"></span></label>
         <input type="text" id="node-config-input-host" data-i18n="[placeholder]ads-connection.placeholder.host">
     </div>
     <div class="form-row">
-        <label for="node-config-input-amsNetIdTarget"><i class="fa fa-tag"></i> <span data-i18n="ads-connection.label.amsNetIdTarget"></span></label>
+        <label for="node-config-input-amsNetIdTarget"><i class="fa fa-globe"></i> <span data-i18n="ads-connection.label.amsNetIdTarget"></span></label>
         <input type="text" id="node-config-input-amsNetIdTarget" data-i18n="[placeholder]ads-connection.placeholder.amsNetIdTarget">
     </div>
     <div class="form-row">
-        <label for="node-config-input-amsNetIdSource"><i class="fa fa-tag"></i> <span data-i18n="ads-connection.label.amsNetIdSource"></span></label>
+        <label for="node-config-input-amsNetIdSource"><i class="fa fa-home"></i> <span data-i18n="ads-connection.label.amsNetIdSource"></span></label>
         <input type="text" id="node-config-input-amsNetIdSource" data-i18n="[placeholder]ads-connection.placeholder.amsNetIdSource">
     </div>
     <div class="form-row">
-        <label for="node-config-input-port"><i class="fa fa-clock-o"></i> <span data-i18n="ads-connection.label.port"></span></label>
+        <label for="node-config-input-port"><i class="fa fa-sign-out"></i> <span data-i18n="ads-connection.label.port"></span></label>
         <input type="number" id="node-config-input-port" data-i18n="[placeholder]ads-connection.label.port">
     </div> 
     <div class="form-row">
-        <label for="node-config-input-amsPortTarget"><i class="fa fa-clock-o"></i> <span data-i18n="ads-connection.label.amsPortTarget"></span></label>
+        <label for="node-config-input-amsPortTarget"><i class="fa fa-sign-out"></i> <span data-i18n="ads-connection.label.amsPortTarget"></span></label>
         <input type="number" id="node-config-input-amsPortTarget" data-i18n="[placeholder]ads-connection.label.amsPortTarget">
     </div> 
     <div class="form-row">
-        <label for="node-config-input-amsPortSource"><i class="fa fa-clock-o"></i> <span data-i18n="ads-connection.label.amsPortSource"></span></label>
+        <label for="node-config-input-amsPortSource"><i class="fa fa-sign-in"></i> <span data-i18n="ads-connection.label.amsPortSource"></span></label>
         <input type="number" id="node-config-input-amsPortSource" data-i18n="[placeholder]ads-connection.label.amsPortSource">
     </div> 
 </script>
 
 <script type="text/javascript">
+    function checkIP(val,len=6) {
+      part=val.split(".");
+      var ok=(part.length==len);
+      for (var i = 0; (i < part.length) && ok; i++) {
+        ok = ok && ((parseInt(part[i])==part[i]) && part[i]>=0 && part[i]<=255)
+      }
+      return ok;
+    }
     RED.nodes.registerType('ads-connection', {
         category: 'config',
         defaults: {
             host: {
                 value: '',
-                required: true
+                required: true,
+                validate: function(val){ var ok = checkIP(val,4);
+                                         if (ok) {
+                                           if ($("#node-config-input-amsNetIdTarget").val() == '') {
+                                             $("#node-config-input-amsNetIdTarget").val(val+'.1.1')
+                                           }
+                                         }
+                                         return ok;
+                                       }
             },
             amsNetIdTarget: {
                 value: '',
-                required: true
+                required: true,
+                validate: checkIP
             },
             amsNetIdSource: {
                 value: '',
-                required: true
+                required: true,
+                validate: checkIP
             },
             port: {
                 value: 48898,
@@ -60,7 +78,7 @@
         label: function() {
             return this.amsNetIdSource+":"+this.amsNetIdTarget;
         },
-            oneditprepare: function() {
+        oneditprepare: function() {
         } 
     });
 </script>

@@ -1,8 +1,9 @@
-<script type="text/x-red" data-help-name="ads-in">
+<script type="text/x-red" data-help-name="ADS In">
     <p>Node to provide data from Beckhoff TwinCAT ADS</p>
+    <p>The data are fetched from the PLC when an object is transferred to the input. The entry data will be ignored.</p>
 </script>
 
-<script type="text/x-red" data-template-name="ads-in">
+<script type="text/x-red" data-template-name="ADS In">
     <div class="form-row">
         <label for="node-input-datasource"><i class="fa fa-random"></i> <span data-i18n="ads-in.label.datasource"></span></label>
         <input type="text" id="node-input-datasource">
@@ -12,7 +13,7 @@
         <input type="text" id="node-input-varName" data-i18n="[placeholder]ads-in.label.varName">
     </div>
     <div class="form-row">
-        <label for="node-input-varTyp"><i class="fa fa-file-text-o"></i> <span data-i18n="ads-in.label.varTyp"></span></label>
+        <label for="node-input-varTyp"><i class="fa fa-code"></i> <span data-i18n="ads-in.label.varTyp"></span></label>
         <select id="node-input-varTyp">
             <option value="BOOL" data-i18n="ads-in.varTyp.BOOL"></option>
             <option value="BYTE" data-i18n="ads-in.varTyp.BYTE"></option>
@@ -35,23 +36,20 @@
             <option value="DATE_AND_TIME" data-i18n="ads-in.varTyp.DATE_AND_TIME"></option>
             <option value="DT" data-i18n="ads-in.varTyp.DT"></option>
             <option value="STRING" data-i18n="ads-in.varTyp.STRING"></option>
+            <option value="RAW" data-i18n="ads-in.varTyp.RAW"></option>
         </select>
     </div>
-    <div class="form-row">
-        <label for="node-input-transmissionMode"><i class="fa fa-file-text-o"></i> <span data-i18n="ads-in.label.transmissionMode"></span></label>
-        <select id="node-input-transmissionMode">
-            <option value="ONCHANGE" data-i18n="ads-in.transmissionMode.ONCHANGE"></option>
-            <option value="CYCLIC" data-i18n="ads-in.transmissionMode.CYCLIC"></option>
+    <div class="form-row" id="node-row-varSize">
+        <label for="node-input-varSize"><i class="fa fa-arrows-h"></i> <span data-i18n="ads-in.label.varSize"></span></label>
+        <input type="number" id="node-input-varSize" data-i18n="[placeholder]ads-in.label.varSize">
+    </div>
+    <div class="form-row" id="node-row-timezone">
+        <label for="node-input-timezone"><i class="fa fa-plane"></i> <span data-i18n="ads-in.label.timezone"></span></label>
+        <select id="node-input-timezone">
+            <option value="UNCHANGED" data-i18n="ads-in.timezone.UNCHANGED"></option>
+            <option value="TO_LOCAL" data-i18n="ads-in.timezone.TO_LOCAL"></option>
         </select>
     </div>
-    <div class="form-row">
-        <label for="node-input-maxDelay"><i class="fa fa-clock-o"></i> <span data-i18n="ads-in.label.maxDelay"></span></label>
-        <input type="number" id="node-input-maxDelay" data-i18n="[placeholder]ads-in.label.maxDelay">
-    </div> 
-    <div class="form-row">
-        <label for="node-input-cycleTime"><i class="fa fa-clock-o"></i> <span data-i18n="ads-in.label.cycleTime"></span></label>
-        <input type="number" id="node-input-cycleTime" data-i18n="[placeholder]ads-in.label.cycleTime">
-    </div> 
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
@@ -59,9 +57,9 @@
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType("ads-in", {
+    RED.nodes.registerType("ADS In", {
         category: "Beckhoff PLC",
-        color: "#00cc00",
+        color: "#00dd00",
         defaults: {
             name: {
                 name: ""
@@ -78,29 +76,51 @@
                 value: "",
                 required: true
             },
-            transmissionMode: {
-                value: "ONCHANGE",
-                required: true
+            varSize: {
+                value: "",
+                validate: function (val) {return ($("#node-input-varTyp").val()!== "RAW") || (RED.validators.number(val) && val>0)} 
             },
-            maxDelay: {
-                value: 0,
-                required: true,  
-                validate:RED.validators.number()
-            },
-            cycleTime: {
-                value: 10,
-                required: true,  
-                validate:RED.validators.number()
+            timezone: {
+                value: "UNCHANGED",
+                validate: function (val) {return ((val !== "TIME" && 
+                                                   val !== "TIME_OF_DAY" &&
+                                                   val !== "TOD" &&
+                                                   val !== "DATE" &&
+                                                   val !== "DATE_AND_TIME" &&
+                                                   val !== "DT")
+                                               || (val === "UNCHANGED") || (val === "TO_LOCAL"))} 
             }
         },
-        inputs: 0,
+        inputs: 1,
         outputs: 1,
         icon: "tcat.png",
         label: function () {
-            return this.name || "ads-in";
+            return this.name || "ADS In";
         },
         labelStyle: function () {
             return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+          $("#node-input-varTyp").change(function(e) {
+                  var varType = $(this).val();
+                  if (varType === "RAW") {
+                      $("#node-row-varSize").show();
+                  } else {
+                      $("#node-row-varSize").hide();
+                  }
+                  if (varType === "TIME" ||
+                      varType === "TIME_OF_DAY" ||
+                      varType === "TOD" ||
+                      varType === "DATE" ||
+                      varType === "DATE_AND_TIME" ||
+                      varType === "DT") {
+                      $("#node-row-timezone").show();
+                  } else {
+                      $("#node-row-timezone").hide();
+                  }
+              /*    node.resize();*/
+              }); 
         }
     });
+    
 </script>

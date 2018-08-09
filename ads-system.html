@@ -1,0 +1,40 @@
+<script type="text/x-red" data-help-name="ADS System">
+    <p>Node for providing the system state of Beckhoff TwinCAT ADS</p>
+    <p>The operating mode, the data model version, the program name and the program version are provided. This happens when one of the parameters changes or when an object is transferred to the input. The entry data will be ignored.<p>
+</script>
+
+<script type="text/x-red" data-template-name="ADS System">
+    <div class="form-row">
+        <label for="node-input-datasource"><i class="fa fa-random"></i> <span data-i18n="ads-system.label.datasource"></span></label>
+        <input type="text" id="node-input-datasource">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("ADS System", {
+        category: "Beckhoff PLC",
+        color: "#00bb00",
+        defaults: {
+            name: {
+                name: ""
+            },
+            datasource: {
+                type: "ads-connection",
+                required: true
+            }
+        },
+        inputs: 1,
+        outputs: 1,
+        icon: "tcat.png",
+        label: function () {
+            return this.name || "ADS System";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        }
+    });
+</script>

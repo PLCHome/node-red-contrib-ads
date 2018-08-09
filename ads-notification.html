@@ -1,0 +1,156 @@
+<script type="text/x-red" data-help-name="ADS Notification">
+    <p>Node to provide data from Beckhoff TwinCAT ADS</p>
+    <p>The PLC sends the data automatically when it detects a change. The cycle of the test and the delay time can be adjusted. The value can also be transmitted cyclically by the PLC.</p>
+    <p>Attention! Beckhoff says in the documentation that not more than 500 notifications should be registered.</p>
+</script>
+
+<script type="text/x-red" data-template-name="ADS Notification">
+    <div class="form-row">
+        <label for="node-input-datasource"><i class="fa fa-random"></i> <span data-i18n="ads-notification.label.datasource"></span></label>
+        <input type="text" id="node-input-datasource">
+    </div>
+    <div class="form-row">
+        <label for="node-input-varName"><i class="fa fa-tag"></i> <span data-i18n="ads-notification.label.varName"></span></label>
+        <input type="text" id="node-input-varName" data-i18n="[placeholder]ads-notification.label.varName">
+    </div>
+    <div class="form-row">
+        <label for="node-input-varTyp"><i class="fa fa-code"></i> <span data-i18n="ads-notification.label.varTyp"></span></label>
+        <select id="node-input-varTyp">
+            <option value="BOOL" data-i18n="ads-notification.varTyp.BOOL"></option>
+            <option value="BYTE" data-i18n="ads-notification.varTyp.BYTE"></option>
+            <option value="WORD" data-i18n="ads-notification.varTyp.WORD"></option>
+            <option value="DWORD" data-i18n="ads-notification.varTyp.DWORD"></option>
+            <option value="SINT" data-i18n="ads-notification.varTyp.SINT"></option>
+            <option value="USINT" data-i18n="ads-notification.varTyp.USINT"></option>
+            <option value="INT" data-i18n="ads-notification.varTyp.INT"></option>
+            <option value="UINT" data-i18n="ads-notification.varTyp.UINT"></option>
+            <option value="DINT" data-i18n="ads-notification.varTyp.DINT"></option>
+            <option value="UDINT" data-i18n="ads-notification.varTyp.UDINT"></option>
+            <option value="LINT" data-i18n="ads-notification.varTyp.LINT"></option>
+            <option value="ULINT" data-i18n="ads-notification.varTyp.ULINT"></option>
+            <option value="REAL" data-i18n="ads-notification.varTyp.REAL"></option>
+            <option value="LREAL" data-i18n="ads-notification.varTyp.LREAL"></option>
+            <option value="TIME" data-i18n="ads-notification.varTyp.TIME"></option>
+            <option value="TIME_OF_DAY" data-i18n="ads-notification.varTyp.TIME_OF_DAY"></option>
+            <option value="TOD" data-i18n="ads-notification.varTyp.TOD"></option>
+            <option value="DATE" data-i18n="ads-notification.varTyp.DATE"></option>
+            <option value="DATE_AND_TIME" data-i18n="ads-notification.varTyp.DATE_AND_TIME"></option>
+            <option value="DT" data-i18n="ads-notification.varTyp.DT"></option>
+            <option value="STRING" data-i18n="ads-notification.varTyp.STRING"></option>
+            <option value="RAW" data-i18n="ads-notification.varTyp.RAW"></option>
+        </select>
+    </div>
+    <div class="form-row" id="node-row-varSize">
+        <label for="node-input-varSize"><i class="fa fa-arrows-h"></i> <span data-i18n="ads-notification.label.varSize"></span></label>
+        <input type="number" id="node-input-varSize" data-i18n="[placeholder]ads-notification.label.varSize">
+    </div>
+    <div class="form-row" id="node-row-timezone">
+        <label for="node-input-timezone"><i class="fa fa-plane"></i> <span data-i18n="ads-notification.label.timezone"></span></label>
+        <select id="node-input-timezone">
+            <option value="UNCHANGED" data-i18n="ads-notification.timezone.UNCHANGED"></option>
+            <option value="TO_LOCAL" data-i18n="ads-notification.timezone.TO_LOCAL"></option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-transmissionMode"><i class="fa fa-eye"></i> <span data-i18n="ads-notification.label.transmissionMode"></span></label>
+        <select id="node-input-transmissionMode">
+            <option value="ONCHANGE" data-i18n="ads-notification.transmissionMode.ONCHANGE"></option>
+            <option value="CYCLIC" data-i18n="ads-notification.transmissionMode.CYCLIC"></option>
+        </select>
+    </div>
+    <div class="form-row">
+        <label for="node-input-maxDelay"><i class="fa fa-clock-o"></i> <span data-i18n="ads-notification.label.maxDelay"></span></label>
+        <input type="number" id="node-input-maxDelay" data-i18n="[placeholder]ads-notification.label.maxDelay">
+    </div> 
+    <div class="form-row">
+        <label for="node-input-cycleTime"><i class="fa fa-repeat"></i> <span data-i18n="ads-notification.label.cycleTime"></span></label>
+        <input type="number" id="node-input-cycleTime" data-i18n="[placeholder]ads-notification.label.cycleTime">
+    </div> 
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
+        <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
+    </div>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType("ADS Notification", {
+        category: "Beckhoff PLC",
+        color: "#00ee00",
+        defaults: {
+            name: {
+                name: ""
+            },
+            datasource: {
+                type: "ads-connection",
+                required: true
+            },
+            varName: {
+                value: "",
+                required: true
+            },
+            varTyp: {
+                value: "",
+                required: true
+            },
+            varSize: {
+                value: "",
+                validate: function (val) {return ($("#node-input-varTyp").val()!== "RAW") || (RED.validators.number(val) && val>0)} 
+            },
+            timezone: {
+                value: "UNCHANGED",
+                validate: function (val) {return ((val !== "TIME" && 
+                                                   val !== "TIME_OF_DAY" &&
+                                                   val !== "TOD" &&
+                                                   val !== "DATE" &&
+                                                   val !== "DATE_AND_TIME" &&
+                                                   val !== "DT")
+                                               || (val === "UNCHANGED") || (val === "TO_LOCAL"))} 
+            },
+            transmissionMode: {
+                value: "ONCHANGE",
+                required: true
+            },
+            maxDelay: {
+                value: 0,
+                required: true,  
+                validate:RED.validators.number()
+            },
+            cycleTime: {
+                value: 10,
+                required: true,  
+                validate:RED.validators.number()
+            }
+        },
+        inputs: 0,
+        outputs: 1,
+        icon: "tcat.png",
+        label: function () {
+            return this.name || "ADS Notification";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+          $("#node-input-varTyp").change(function(e) {
+                  var varType = $(this).val();
+                  if (varType === "RAW") {
+                      $("#node-row-varSize").show();
+                  } else {
+                      $("#node-row-varSize").hide();
+                  }
+                  if (varType === "TIME" ||
+                      varType === "TIME_OF_DAY" ||
+                      varType === "TOD" ||
+                      varType === "DATE" ||
+                      varType === "DATE_AND_TIME" ||
+                      varType === "DT") {
+                      $("#node-row-timezone").show();
+                  } else {
+                      $("#node-row-timezone").hide();
+                  }
+              /*    node.resize();*/
+              }); 
+        }
+    });
+    
+</script>

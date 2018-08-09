@@ -1,13 +1,18 @@
 {
-  "ads-in": {
+  "ads-notification": {
       "label": {
           "datasource": "Datasource",
           "varName": "variable name",
           "varTyp": "variable type",
           "varSize": "size in byte",
-          "timezone": "timezone"
+          "timezone": "timezone",
+          "transmissionMode": "transmission mode",
+          "maxDelay": "max delay [ms]",
+          "cycleTime": "cycle time [ms]"
       },
       "placeholder": {
+          "maxDelay": "Latest time (in ms) after which the event has finished",
+          "cycleTime": "Time (in ms) after which the PLC server checks whether the variable has changed"
       },
       "varTyp": {
         "BOOL": "BOOL",
@@ -32,6 +37,10 @@
         "DT": "DT",
         "STRING": "STRING",
         "RAW": "RAW"
+      },
+      "transmissionMode": {
+        "ONCHANGE": "ONCHANGE",
+        "CYCLIC": "CYCLIC"
       },
       "timezone": {
         "UNCHANGED": "unchanged",
