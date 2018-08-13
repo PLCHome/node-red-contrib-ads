@@ -1,6 +1,6 @@
 module.exports = function (RED) {
   'use strict';
-  var nodeads = require('node-ads');
+  var nodeads = require('node-ads-api');
   var util = require('util');
 
   function AdsConnectionNode(config) {
