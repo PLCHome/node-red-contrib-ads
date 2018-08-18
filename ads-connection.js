@@ -76,11 +76,7 @@ module.exports = function (RED) {
               handle.start = false
             } else {
               node.log(util.format('new sym Version - restart'))
-              internalSetConnectState(connectState.DISCONNECTING)
-              node.adsClient.end(function (){
-                internalSetConnectState(connectState.DISCONNECTED)
-                connect()
-              })
+              internalRestart()
             }
           }
           if (handle.node) {
@@ -118,8 +114,7 @@ module.exports = function (RED) {
           if (node.system.connectState == connectState.CONNECTED) {
             internalSetConnectState(connectState.DISCONNECTED)
           }
-          node.adsClient.end()
-          connect()
+          internalRestart()
         }
       },time||2000)
     }
@@ -165,12 +160,13 @@ module.exports = function (RED) {
       if (isTimezoneType(n.adstype)) {
         handle.useLocalTimezone = (val === "TO_LOCAL")
       }
-      node.adsClient.notify(handle, function(err){
-        if (err){
-          node.error(util.format('Ads Register Notification %s', err))
-        }
-      })
-
+      if (node.adsClient) {       
+        node.adsClient.notify(handle, function(err){
+          if (err){
+            node.error(util.format('Ads Register Notification %s', err))
+          }
+        })
+      }
     }
 
     function internalSubscribeLiveTick(){
@@ -181,13 +177,13 @@ module.exports = function (RED) {
         cycleTime: 1000,
         bytelength: nodeads.WORD
       }
-
-      node.adsClient.notify(handle, function(err){
-        if (err){
-          node.error(util.format('Ads Register Notification %s', err))
-        }
-      })
-
+      if (node.adsClient) {
+        node.adsClient.notify(handle, function(err){
+          if (err){
+            node.error(util.format('Ads Register Notification live tick %s', err))
+          }
+        })
+      }
     }
 
     function internalSubscribeSymTab(){
@@ -199,12 +195,13 @@ module.exports = function (RED) {
         start: true
       }
 
-      node.adsClient.notify(handle, function(err){
-        if (err){
-          node.error(util.format('Ads Register Notification %s', err))
-        }
-      })
-
+      if (node.adsClient) {
+        node.adsClient.notify(handle, function(err){
+          if (err){
+            node.error(util.format('Ads Register Notification Sym Tab %s', err))
+          }
+        })
+      }
     }
     /* end subscribe on PLC */
 
@@ -228,8 +225,14 @@ module.exports = function (RED) {
         if (isTimezoneType(n.adstype)) {
           handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
         }
-        node.adsClient.write(handle,
-            function (err){})
+        if (node.adsClient) {
+          node.adsClient.write(handle,
+            function (err){
+              if (err) {
+                node.error(util.format('Ads write %s', err))
+              }
+            } )
+        }
       }
     }
     /* end write to PLC */
@@ -253,13 +256,15 @@ module.exports = function (RED) {
         if (isTimezoneType(n.adstype)) {
           handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
         }
-        node.adsClient.read(handle, function(err, handle){
+        if (node.adsClient) {
+          node.adsClient.read(handle, function(err, handle){
             if (err) {
               node.error(util.format('Ads read %s', err))
             } else {
               cb(handle)
             }
           })
+        }
       }
     }
     /* end read from PLC */
@@ -268,37 +273,34 @@ module.exports = function (RED) {
     node.on('close', function (done) {
       clearTimeout(conncetTimer)
       internalSetConnectState(connectState.DISCONNECTING)
-      node.adsClient.end(function (){
+      if (node.adsClient) {
+        node.adsClient.end(function (){
+          internalSetConnectState(connectState.DISCONNECTED)
+          delete (node.adsClient)
+          done()
+        })
+      } else {
         internalSetConnectState(connectState.DISCONNECTED)
-        delete (node.adsClient)
         done()
-      })
+      }
     })
+    
+    function internalRestart() {
+      if (node.adsClient) {
+        node.adsClient.end(function (){
+          internalSetConnectState(connectState.DISCONNECTED)
+          delete (node.adsClient)
+        })
+      }
+      connect()
+    }
     /* end node RIP */
 
     /* set Note State */
     function internalSetConnectState (cState) {
       if ((!node.system.connectState) || node.system.connectState != cState) {
-        var text = '?'
-        switch (cState) {
-          case connectState.ERROR:
-                text = 'ERROR'
-                break
-          case connectState.DISCONNECTED:
-                text = 'DISCONNECTED'
-                break
-          case connectState.CONNECTIG:
-                text = 'CONNECTIG'
-                break
-          case connectState.CONNECTED:
-                text = 'CONNECTED'
-                break
-          case connectState.DISCONNECTING:
-                text = 'DISCONNECTING'
-                break
-        }
         node.system.connectState = cState
-        node.system.connectStateText = text
+        node.system.connectStateText = connectState.fromId(cState)
         internalSystemUpdate()
       }
     }
@@ -319,7 +321,6 @@ module.exports = function (RED) {
         node.systemNodes.splice(index,1)
       }
     }
-
 
     function internalSystemUpdate () {
       if (node.systemNodes) {
@@ -390,59 +391,6 @@ module.exports = function (RED) {
       n.status({fill:fillSystem,shape:shapeSystem,text:textSystem})
     }
 
-    function setNoteState (n) {
-      var externState={
-        fill: "grey",
-        shape: "ring"
-      }
-      switch (node.system.connectState) {
-        case connectState.ERROR:
-          externState.fill = "red"
-          break
-        case connectState.DISCONNECTED:
-        case connectState.CONNECTIG:
-        case connectState.DISCONNECTING:
-          externState.fill = "grey"
-          break
-        case connectState.CONNECTED:
-          externState.fill = "green"
-          switch (adsState) {
-            case nodeads.ADSSTATE.INVALID:
-                  externState.fill = "grey"
-                  break
-            case nodeads.ADSSTATE.IDLE:
-            case nodeads.ADSSTATE.RESET:
-            case nodeads.ADSSTATE.INIT:
-            case nodeads.ADSSTATE.POWERGOOD:
-            case nodeads.ADSSTATE.SHUTDOWN:
-            case nodeads.ADSSTATE.SUSPEND:
-            case nodeads.ADSSTATE.RESUME:
-            case nodeads.ADSSTATE.RECONFIG:
-                  externState.fill = "blue"
-                  break
-            case nodeads.ADSSTATE.CONFIG:
-            case nodeads.ADSSTATE.START:
-            case nodeads.ADSSTATE.STOPPING:
-            case nodeads.ADSSTATE.SAVECFG:
-            case nodeads.ADSSTATE.LOADCFG:
-                  externState.fill = "yellow"
-                  break
-            case nodeads.ADSSTATE.RUN:
-                  externState.fill = "green"
-                  break
-            case nodeads.ADSSTATE.ERROR:
-            case nodeads.ADSSTATE.STOP:
-            case nodeads.ADSSTATE.POWERFAILURE:
-                  externState.fill = "red"
-                  break
-          }
-          break
-      }
-      RED.nodes.eachNode(function (n) {
-        n.status(externState)
-      })
-    }
-
     function internalSetAdsState(adsState) {
       if ((!node.system.adsState) || node.system.adsState != adsState) {
         node.system.adsState = adsState
@@ -479,5 +427,11 @@ const connectState = {
   DISCONNECTED:               0,
   CONNECTIG:                  1,
   CONNECTED:                  2,
-  DISCONNECTING:              3
+  DISCONNECTING:              3,
+  fromId: function(id) {
+    var states = this
+    var state
+    Object.keys(states).map(function(key){if (states[key]==id) state=key})
+    return state
+  }
 }

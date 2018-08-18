@@ -4,7 +4,7 @@
           "datasource": "Datasource",
           "varName": "variable name",
           "varTyp": "variable type",
-          "outValue": "Output value"
+          "outValue": "Output value",
           "varSize": "size in byte",
           "timezone": "timezone"
       },
