@@ -111,7 +111,8 @@
         oneditprepare: function() {
           $("#node-input-varTyp").change(function(e) {
                   var varType = $(this).val();
-                  if (varType === "RAW") {
+                  if (varType === "RAW" ||
+                      varType === "STRING") {
                       $("#node-row-varSize").show();
                   } else {
                       $("#node-row-varSize").hide();

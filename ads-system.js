@@ -24,7 +24,7 @@ module.exports = function (RED) {
       node.adsDatasource.systemRegister(node);
       
       this.on("input", function(msg) { 
-        node.adsDatasource.systemUpdate();
+        node.adsDatasource.systemUpdate(node);
       });
       
       node.on('close', function () {
