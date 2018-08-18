@@ -5,6 +5,8 @@
           "varName": "variable name",
           "varTyp": "variable type",
           "outValue": "Output value"
+          "varSize": "size in byte",
+          "timezone": "timezone"
       },
       "placeholder": {
       },
@@ -29,7 +31,12 @@
         "DATE": "DATE",
         "DATE_AND_TIME": "DATE_AND_TIME",
         "DT": "DT",
-        "STRING": "STRING"
+        "STRING": "STRING",
+        "RAW": "RAW"
+      },
+      "timezone": {
+        "UNCHANGED": "unchanged",
+        "TO_LOCAL": "convert to local timezone"
       } 
     }
 }
