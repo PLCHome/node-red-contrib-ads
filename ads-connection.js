@@ -1,6 +1,7 @@
 module.exports = function (RED) {
   'use strict'
   var nodeads = require('node-ads-api')
+  var adsHelpers = require('./ads-helpers')
   var util = require('util')
 
   function AdsConnectionNode(config) {
@@ -14,16 +15,15 @@ module.exports = function (RED) {
     node.amsPortTarget = parseInt(config.amsPortTarget)
 
     node.system = {}
-    internalSetConnectState(connectState.DISCONNECTED)
+    internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
     internalSetAdsState(nodeads.ADSSTATE.INVALID)
 
     node.adsNotificationNodes = []
     node.systemNodes = []
 
     /* connect to PLC */
-    connect()
     function connect() {
-      internalSetConnectState(connectState.CONNECTIG)
+      internalSetConnectState(adsHelpers.connectState.CONNECTIG)
       var adsoptions = {
         "host": node.host,
         "amsNetIdTarget": node.amsNetIdTarget,
@@ -32,10 +32,11 @@ module.exports = function (RED) {
         "amsPortSource": node.amsPortSource,
         "amsPortTarget": node.amsPortTarget
       }
+      startTimer(45000)
       node.adsClient = nodeads.connect(adsoptions,
         function (err){
           if (err) {
-            internalSetConnectState(connectState.DISCONNECTED)
+            internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
             startTimer()
             node.error(util.format('Error Connecting ADS: %s', err))
           } else {
@@ -56,7 +57,7 @@ module.exports = function (RED) {
               }
             )
             node.adsNotificationNodes.forEach(internalSubscribe)
-            internalSetConnectState(connectState.CONNECTED)
+            internalSetConnectState(adsHelpers.connectState.CONNECTED)
           }
         }
       )
@@ -64,7 +65,9 @@ module.exports = function (RED) {
       node.adsClient.on('notification', function (handle){
           if (handle.indexGroup == nodeads.ADSIGRP.DEVICE_DATA &&
               handle.indexOffset == nodeads.ADSIOFFS_DEVDATA.ADSSTATE) {
-            startTimer()
+            if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {     
+              startTimer()
+            }
             internalSetAdsState(handle.value)
           } else if (handle.indexGroup == nodeads.ADSIGRP.SYM_VERSION &&
                      handle.indexOffset == 0) {
@@ -76,7 +79,7 @@ module.exports = function (RED) {
               handle.start = false
             } else {
               node.log(util.format('new sym Version - restart'))
-              internalRestart()
+              internalRestart(connect)
             }
           }
           if (handle.node) {
@@ -91,11 +94,9 @@ module.exports = function (RED) {
       node.adsClient.on('error', function (error) {
           if (error){
             node.error(util.format('Error ADS: %s', error))
-            node.log(util.format('Error ADS: %s', node.system.connectState))
-            if (node.system.connectState == connectState.CONNECTIG) {
-              internalSetConnectState(connectState.ERROR)
+            if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTIG) {
+              internalSetConnectState(adsHelpers.connectState.ERROR)
             }
-            node.log(util.format('Error ADS: %s', node.system.connectState))
             startTimer(20000)
           }
         }
@@ -109,14 +110,14 @@ module.exports = function (RED) {
 
     function startTimer(time){
       clearTimeout(conncetTimer)
-      conncetTimer = setInterval(function () {
-        if (node.system.connectState != connectState.CONNECTIG) {
-          if (node.system.connectState == connectState.CONNECTED) {
-            internalSetConnectState(connectState.DISCONNECTED)
+      if (node.system.adsHelpers.connectState != adsHelpers.connectState.DISCONNECTING) {
+        conncetTimer = setInterval(function () {
+          if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {
+            internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
           }
-          internalRestart()
-        }
-      },time||2000)
+          internalRestart(connect)
+        },time||2000)
+      }
     }
     /* needs internalSubscribeLiveTick */
     /* end check connection to PLC */
@@ -126,7 +127,7 @@ module.exports = function (RED) {
       if (node.adsNotificationNodes.indexOf(n) < 0) {
         node.adsNotificationNodes.push(n)
       }
-      if (node.system.connectState == connectState.CONNECTED) {
+      if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {
         internalSubscribe(n)
       }
     }
@@ -148,19 +149,19 @@ module.exports = function (RED) {
         cycleTime: n.cycleTime,
         node: n
         }
-      if (isRawType(n.adstype)) {
+      if (adsHelpers.isRawType(n.adstype)) {
         handle.bytelength = parseInt(n.bytelength)
       } else {
-        if (isStringType(n.adstype) && n.bytelength) {
+        if (adsHelpers.isStringType(n.adstype) && n.bytelength) {
           handle.bytelength = nodeads.string(parseInt(n.bytelength))
         } else {
           handle.bytelength = nodeads[n.adstype]
         }
       }
-      if (isTimezoneType(n.adstype)) {
+      if (adsHelpers.isTimezoneType(n.adstype)) {
         handle.useLocalTimezone = (val === "TO_LOCAL")
       }
-      if (node.adsClient) {       
+      if (node.adsClient) {
         node.adsClient.notify(handle, function(err){
           if (err){
             node.error(util.format('Ads Register Notification %s', err))
@@ -207,22 +208,22 @@ module.exports = function (RED) {
 
     /* write to PLC */
     node.write = function (n, value) {
-      if (node.system.connectState == connectState.CONNECTED) {
+      if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
           symname: n.symname,
           propname: 'value',
           value: value
         }
-        if (isRawType(n.adstype)) {
+        if (adsHelpers.isRawType(n.adstype)) {
           handle.bytelength = parseInt(n.bytelength)
         } else {
-          if (isStringType(n.adstype) && n.bytelength) {
+          if (adsHelpers.isStringType(n.adstype) && n.bytelength) {
             handle.bytelength = nodeads.string(parseInt(n.bytelength))
           } else {
             handle.bytelength = nodeads[n.adstype]
           }
         }
-        if (isTimezoneType(n.adstype)) {
+        if (adsHelpers.isTimezoneType(n.adstype)) {
           handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
         }
         if (node.adsClient) {
@@ -239,21 +240,21 @@ module.exports = function (RED) {
 
     /* read from PLC */
     node.read = function (n, cb) {
-      if (node.system.connectState == connectState.CONNECTED) {
+      if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
           symname: n.symname,
           propname: 'value'
         }
-        if (isRawType(n.adstype)) {
+        if (adsHelpers.isRawType(n.adstype)) {
           handle.bytelength = parseInt(n.bytelength)
         } else {
-          if (isStringType(n.adstype) && n.bytelength) {
+          if (adsHelpers.isStringType(n.adstype) && n.bytelength) {
             handle.bytelength = nodeads.string(parseInt(n.bytelength))
           } else {
             handle.bytelength = nodeads[n.adstype]
           }
         }
-        if (isTimezoneType(n.adstype)) {
+        if (adsHelpers.isTimezoneType(n.adstype)) {
           handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
         }
         if (node.adsClient) {
@@ -271,36 +272,35 @@ module.exports = function (RED) {
 
     /* node RIP */
     node.on('close', function (done) {
+      node.adsNotificationNodes = []
+      node.systemNodes = []
+      internalRestart(done)
+    })
+
+    function internalRestart(done) {
+      internalSetConnectState(adsHelpers.connectState.DISCONNECTING)
       clearTimeout(conncetTimer)
-      internalSetConnectState(connectState.DISCONNECTING)
       if (node.adsClient) {
         node.adsClient.end(function (){
-          internalSetConnectState(connectState.DISCONNECTED)
+          internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
           delete (node.adsClient)
-          done()
+          var sleep = setInterval(function () {
+            clearTimeout(sleep)
+            done()
+          },1000)
         })
       } else {
-        internalSetConnectState(connectState.DISCONNECTED)
+        internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
         done()
       }
-    })
-    
-    function internalRestart() {
-      if (node.adsClient) {
-        node.adsClient.end(function (){
-          internalSetConnectState(connectState.DISCONNECTED)
-          delete (node.adsClient)
-        })
-      }
-      connect()
     }
     /* end node RIP */
 
     /* set Note State */
     function internalSetConnectState (cState) {
-      if ((!node.system.connectState) || node.system.connectState != cState) {
-        node.system.connectState = cState
-        node.system.connectStateText = connectState.fromId(cState)
+      if ((!node.system.adsHelpers.connectState) || node.system.adsHelpers.connectState != cState) {
+        node.system.adsHelpers.connectState = cState
+        node.system.connectStateText = adsHelpers.connectState.fromId(cState)
         internalSystemUpdate()
       }
     }
@@ -341,18 +341,18 @@ module.exports = function (RED) {
       var fillSystem = "grey"
       var shapeSystem = "ring"
       var textSystem = node.system.connectStateText
-      switch (node.system.connectState) {
-        case connectState.ERROR:
+      switch (node.system.adsHelpers.connectState) {
+        case adsHelpers.connectState.ERROR:
           fillSystem = "red"
           break
-        case connectState.DISCONNECTED:
+        case adsHelpers.connectState.DISCONNECTED:
           fillSystem = "grey"
           break
-        case connectState.CONNECTIG:
-        case connectState.DISCONNECTING:
+        case adsHelpers.connectState.CONNECTIG:
+        case adsHelpers.connectState.DISCONNECTING:
           fillSystem = "yellow"
           break
-        case connectState.CONNECTED:
+        case adsHelpers.connectState.CONNECTED:
           fillSystem = "green"
           shapeSystem = "dot"
           textSystem = node.system.adsStateText
@@ -400,38 +400,8 @@ module.exports = function (RED) {
 
     }
     /* end system Nodes*/
+    connect()
   }
   RED.nodes.registerType('ads-connection', AdsConnectionNode)
 
-}
-
-function isTimezoneType (adsType) {
-  return (adsType === "TIME" ||
-          adsType === "TIME_OF_DAY" ||
-          adsType === "TOD" ||
-          adsType === "DATE" ||
-          adsType === "DATE_AND_TIME" ||
-          adsType === "DT")
-}
-
-function isRawType (adsType) {
-  return (adsType === "RAW")
-}
-
-function isStringType (adsType) {
-  return (adsType === "STRING")
-}
-
-const connectState = {
-  ERROR:                     -1,
-  DISCONNECTED:               0,
-  CONNECTIG:                  1,
-  CONNECTED:                  2,
-  DISCONNECTING:              3,
-  fromId: function(id) {
-    var states = this
-    var state
-    Object.keys(states).map(function(key){if (states[key]==id) state=key})
-    return state
-  }
 }

@@ -1,56 +1,56 @@
 module.exports = function (RED) {
-  'use strict';
-//  var util = require('util');
+  'use strict'
+//  var util = require('util')
 
   function adsNotificationNode(config) {
-    RED.nodes.createNode(this, config);
-    var node = this;
+    RED.nodes.createNode(this, config)
+    var node = this
 
-    node.adsDatasource = RED.nodes.getNode(config.datasource);
+    node.adsDatasource = RED.nodes.getNode(config.datasource)
     if (node.adsDatasource) {
-      node.symname = config.varName;
-      node.adstype = config.varTyp;
-      node.bytelength = config.varSize;
-      node.timezone = config.timezone;
-      node.transmissionMode = config.transmissionMode;
-      node.maxDelay = config.maxDelay;
-      node.cycleTime = config.cycleTime;
+      node.symname = config.varName
+      node.adstype = config.varTyp
+      node.bytelength = config.varSize
+      node.timezone = config.timezone
+      node.transmissionMode = config.transmissionMode
+      node.maxDelay = config.maxDelay
+      node.cycleTime = config.cycleTime
 
       node.onAdsData = function (handle){
         const msg = {
           payload: handle.value
-        };
-        node.send(msg);
-        node.setStatus();
+        }
+        node.send(msg)
+        node.setStatus()
       }
 
       node.setStatus = function (nodeState,txt){
-      
+
       // node.setAdsState = function (nodeState,txt){
         // switch (nodeState)
           // case NOTCONNECTED:
-                // break;
+                // break
           // case NOTCONNECTFEHLER:
-                // break;
+                // break
           // case CONNECTEDOTHER:
-                // break;
+                // break
           // case CONNECTEDRUN:
-                // break;
+                // break
 //red, green, yellow, blue or grey
 
         if (txt) {
-          
-          node.status({fill:"red",shape:"ring",text:node.status.txt});
+
+          node.status({fill:"red",shape:"ring",text:node.status.txt})
         }
       }
-      
-      node.adsDatasource.subscribe(node);
+
+      node.adsDatasource.subscribe(node)
 
       node.on('close', function () {
-        node.adsDatasource.unsubscribe(node);
-      });
-      
+        node.adsDatasource.unsubscribe(node)
+      })
+
     }
   }
-  RED.nodes.registerType('ADS Notification', adsNotificationNode);
+  RED.nodes.registerType('ADS Notification', adsNotificationNode)
 }
