@@ -65,7 +65,7 @@ module.exports = function (RED) {
       node.adsClient.on('notification', function (handle){
           if (handle.indexGroup == nodeads.ADSIGRP.DEVICE_DATA &&
               handle.indexOffset == nodeads.ADSIOFFS_DEVDATA.ADSSTATE) {
-            if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {     
+            if (node.system.connectState == adsHelpers.connectState.CONNECTED) {     
               startTimer()
             }
             internalSetAdsState(handle.value)
@@ -94,7 +94,7 @@ module.exports = function (RED) {
       node.adsClient.on('error', function (error) {
           if (error){
             node.error(util.format('Error ADS: %s', error))
-            if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTIG) {
+            if (node.system.connectState == adsHelpers.connectState.CONNECTIG) {
               internalSetConnectState(adsHelpers.connectState.ERROR)
             }
             startTimer(20000)
@@ -110,9 +110,9 @@ module.exports = function (RED) {
 
     function startTimer(time){
       clearTimeout(conncetTimer)
-      if (node.system.adsHelpers.connectState != adsHelpers.connectState.DISCONNECTING) {
+      if (node.system.connectState != adsHelpers.connectState.DISCONNECTING) {
         conncetTimer = setInterval(function () {
-          if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {
+          if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
             internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
           }
           internalRestart(connect)
@@ -127,7 +127,7 @@ module.exports = function (RED) {
       if (node.adsNotificationNodes.indexOf(n) < 0) {
         node.adsNotificationNodes.push(n)
       }
-      if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {
+      if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         internalSubscribe(n)
       }
     }
@@ -208,7 +208,7 @@ module.exports = function (RED) {
 
     /* write to PLC */
     node.write = function (n, value) {
-      if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {
+      if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
           symname: n.symname,
           propname: 'value',
@@ -240,7 +240,7 @@ module.exports = function (RED) {
 
     /* read from PLC */
     node.read = function (n, cb) {
-      if (node.system.adsHelpers.connectState == adsHelpers.connectState.CONNECTED) {
+      if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
           symname: n.symname,
           propname: 'value'
@@ -298,8 +298,8 @@ module.exports = function (RED) {
 
     /* set Note State */
     function internalSetConnectState (cState) {
-      if ((!node.system.adsHelpers.connectState) || node.system.adsHelpers.connectState != cState) {
-        node.system.adsHelpers.connectState = cState
+      if ((!node.system.connectState) || node.system.connectState != cState) {
+        node.system.connectState = cState
         node.system.connectStateText = adsHelpers.connectState.fromId(cState)
         internalSystemUpdate()
       }
@@ -341,7 +341,7 @@ module.exports = function (RED) {
       var fillSystem = "grey"
       var shapeSystem = "ring"
       var textSystem = node.system.connectStateText
-      switch (node.system.adsHelpers.connectState) {
+      switch (node.system.connectState) {
         case adsHelpers.connectState.ERROR:
           fillSystem = "red"
           break
