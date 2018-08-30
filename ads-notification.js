@@ -15,16 +15,16 @@ module.exports = function (RED) {
       node.transmissionMode = config.transmissionMode
       node.maxDelay = config.maxDelay
       node.cycleTime = config.cycleTime
+      node.property = config.property||'payload'
 
       node.onAdsData = function (handle){
-        const msg = {
-          payload: handle.value
-        }
+        var msg = {}
+        RED.util.setMessageProperty(msg, node.property, handle.value)
         node.send(msg)
-        node.setStatus()
+//        node.setStatus()
       }
 
-      node.setStatus = function (nodeState,txt){
+   //   node.setStatus = function (nodeState,txt){
 
       // node.setAdsState = function (nodeState,txt){
         // switch (nodeState)
@@ -38,11 +38,11 @@ module.exports = function (RED) {
                 // break
 //red, green, yellow, blue or grey
 
-        if (txt) {
+     //   if (txt) {
 
-          node.status({fill:"red",shape:"ring",text:node.status.txt})
-        }
-      }
+     //     node.status({fill:"red",shape:"ring",text:node.status.txt})
+     //   }
+   //   }
 
       node.adsDatasource.subscribe(node)
 

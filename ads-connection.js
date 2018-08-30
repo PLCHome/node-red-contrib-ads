@@ -11,8 +11,11 @@ module.exports = function (RED) {
     node.amsNetIdTarget = config.amsNetIdTarget
     node.amsNetIdSource = config.amsNetIdSource
     node.port = parseInt(config.port)
+    adsHelpers.checkPort(node,node.port,48898)
     node.amsPortSource = parseInt(config.amsPortSource)
+    adsHelpers.checkPort(node,node.port,801)
     node.amsPortTarget = parseInt(config.amsPortTarget)
+    adsHelpers.checkPort(node,node.port,32905)
 
     node.system = {}
     internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
@@ -301,6 +304,9 @@ module.exports = function (RED) {
       if ((!node.system.connectState) || node.system.connectState != cState) {
         node.system.connectState = cState
         node.system.connectStateText = adsHelpers.connectState.fromId(cState)
+        if (node.system.connectState != adsHelpers.connectState.CONNECTED) {
+          internalSetAdsState(nodeads.ADSSTATE.INVALID)
+        }
         internalSystemUpdate()
       }
     }
@@ -321,13 +327,19 @@ module.exports = function (RED) {
         node.systemNodes.splice(index,1)
       }
     }
-
+    
     function internalSystemUpdate () {
-      if (node.systemNodes) {
-        node.systemNodes.forEach(function(n){
-            node.systemUpdate(n)
-            setSystemStatus(n)
-          })
+      if (!(node.timerSU)) {
+        node.timerSU = setInterval(function () {
+          clearTimeout(node.timerSU)
+          delete(node.timerSU)
+          if (node.systemNodes) {
+            node.systemNodes.forEach(function(n){
+                node.systemUpdate(n)
+                setSystemStatus(n)
+              })
+          }
+        },50)
       }
     }
 

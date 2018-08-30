@@ -1,17 +1,20 @@
 {
-    "ads-connection": {
-        "label": {
-            "host": "Host",
-            "amsNetIdTarget": "Target NetId",
-            "amsNetIdSource": "Source NetId",
-            "port": "Port",
-            "amsPortSource": "Source Port",
-            "amsPortTarget": "Target Port"
-        },
-        "placeholder": {
-            "host": "for example: 192.168.2.5",
-            "amsNetIdTarget": "for example: 192.168.2.5.1.1",
-            "amsNetIdSource": "for example: 192.168.2.10.1.1"
-        }
-    }
+  "ads-connection": {
+      "label": {
+          "host": "Host",
+          "amsNetIdTarget": "Target NetId",
+          "amsNetIdSource": "Source NetId",
+          "port": "Port",
+          "amsPortSource": "Source Port",
+          "amsPortTarget": "Target Port"
+      },
+      "placeholder": {
+          "host": "for example: 192.168.2.5",
+          "amsNetIdTarget": "for example: 192.168.2.5.1.1",
+          "amsNetIdSource": "for example: 192.168.2.10.1.1",
+          "port": "48898",
+          "amsPortSource": "32905",
+          "amsPortTarget": "801"
+      }
+  }
 }

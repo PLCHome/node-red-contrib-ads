@@ -11,7 +11,7 @@
     </div>
     <div class="form-row">
         <label for="node-input-varName"><i class="fa fa-tag"></i> <span data-i18n="ads-notification.label.varName"></span></label>
-        <input type="text" id="node-input-varName" data-i18n="[placeholder]ads-notification.label.varName">
+        <input type="text" id="node-input-varName" data-i18n="[placeholder]ads-notification.placeholder.varName">
     </div>
     <div class="form-row">
         <label for="node-input-varTyp"><i class="fa fa-code"></i> <span data-i18n="ads-notification.label.varTyp"></span></label>
@@ -42,7 +42,7 @@
     </div>
     <div class="form-row" id="node-row-varSize">
         <label for="node-input-varSize"><i class="fa fa-arrows-h"></i> <span data-i18n="ads-notification.label.varSize"></span></label>
-        <input type="number" id="node-input-varSize" data-i18n="[placeholder]ads-notification.label.varSize">
+        <input type="number" id="node-input-varSize" data-i18n="[placeholder]ads-notification.placeholder.varSize">
     </div>
     <div class="form-row" id="node-row-timezone">
         <label for="node-input-timezone"><i class="fa fa-plane"></i> <span data-i18n="ads-notification.label.timezone"></span></label>
@@ -60,12 +60,16 @@
     </div>
     <div class="form-row">
         <label for="node-input-maxDelay"><i class="fa fa-clock-o"></i> <span data-i18n="ads-notification.label.maxDelay"></span></label>
-        <input type="number" id="node-input-maxDelay" data-i18n="[placeholder]ads-notification.label.maxDelay">
+        <input type="number" id="node-input-maxDelay" data-i18n="[placeholder]ads-notification.placeholder.maxDelay">
     </div> 
     <div class="form-row">
         <label for="node-input-cycleTime"><i class="fa fa-repeat"></i> <span data-i18n="ads-notification.label.cycleTime"></span></label>
-        <input type="number" id="node-input-cycleTime" data-i18n="[placeholder]ads-notification.label.cycleTime">
+        <input type="number" id="node-input-cycleTime" data-i18n="[placeholder]ads-notification.placeholder.cycleTime">
     </div> 
+    <div class="form-row">
+        <label for="node-input-property"><i class="fa fa-ellipsis-h"></i> <span data-i18n="ads-notification.label.property"></span></label>
+        <input type="text" id="node-input-property" data-i18n="[placeholder]ads-notification.placeholder.property">
+    </div>
     <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
@@ -119,6 +123,10 @@
                 value: 10,
                 required: true,  
                 validate:RED.validators.number()
+            },
+            property: {
+                value: "payload",
+                required: true
             }
         },
         inputs: 0,
@@ -131,6 +139,10 @@
             return this.name ? "node_label_italic" : "";
         },
         oneditprepare: function() {
+          if (this.property === undefined) {
+            $("#node-input-property").val("payload");
+          } 
+          $("#node-input-property").typedInput({default:'msg',types:['msg']}); 
           $("#node-input-varTyp").change(function(e) {
                   var varType = $(this).val();
                   if (varType === "RAW" ||

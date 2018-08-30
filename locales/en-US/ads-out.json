@@ -4,11 +4,14 @@
           "datasource": "Datasource",
           "varName": "variable name",
           "varTyp": "variable type",
-          "outValue": "Output value",
+          "outValue": "property",
           "varSize": "size in byte",
           "timezone": "timezone"
       },
       "placeholder": {
+          "varName": ".var",
+          "outValue": "payload",
+          "varSize": "byte"
       },
       "varTyp": {
         "BOOL": "BOOL",

@@ -11,10 +11,14 @@ module.exports = function (RED) {
       node.adstype = config.varTyp
       node.bytelength = config.varSize
       node.timezone = config.timezone
-      var outValue = config.outValue||'payload'
+      node.outValue = config.outValue||'payload'
 
       this.on("input", function(msg) {
-        node.adsDatasource.write(node,msg[outValue])
+        var value = RED.util.getMessageProperty(msg,node.outValue)
+        console.log(typeof value)
+        if (value !== undefined) {
+          node.adsDatasource.write(node,value)
+        }
       })
 
       node.on('close', function () {

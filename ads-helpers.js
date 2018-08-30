@@ -1,3 +1,5 @@
+'use strict'
+
 exports.isTimezoneType = function (adsType) {
   return (adsType === "TIME" ||
           adsType === "TIME_OF_DAY" ||
@@ -13,6 +15,13 @@ exports.isRawType = function (adsType) {
 
 exports.isStringType = function (adsType) {
   return (adsType === "STRING")
+}
+
+exports.checkPort = function (node,port,def) {
+  if (port < 0x0000 || port > 0xFFFF) {
+    port = def
+    node.error("wrong port:",port)
+  }
 }
 
 const connectState = {

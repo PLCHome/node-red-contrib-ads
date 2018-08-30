@@ -12,11 +12,11 @@ module.exports = function (RED) {
       node.adstype = config.varTyp
       node.bytelength = config.varSize
       node.timezone = config.timezone
+      node.inValue = config.inValue||'payload'
 
       node.onAdsData = function (handle){
-        const msg = {
-          payload: handle.value
-        }
+        var msg = {}
+        RED.util.setMessageProperty(msg, node.inValue, handle.value)
         node.send(msg)
       }
 

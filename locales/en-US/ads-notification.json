@@ -8,11 +8,15 @@
           "timezone": "timezone",
           "transmissionMode": "transmission mode",
           "maxDelay": "max delay [ms]",
-          "cycleTime": "cycle time [ms]"
+          "cycleTime": "cycle time [ms]",
+          "property": "property"
       },
       "placeholder": {
+          "varName": ".var",
+          "varSize": "bytes",
           "maxDelay": "Latest time (in ms) after which the event has finished",
-          "cycleTime": "Time (in ms) after which the PLC server checks whether the variable has changed"
+          "cycleTime": "Time (in ms) after which the PLC server checks whether the variable has changed",
+          "property": "payload"
       },
       "varTyp": {
         "BOOL": "BOOL",

@@ -5,9 +5,13 @@
           "varName": "variable name",
           "varTyp": "variable type",
           "varSize": "size in byte",
-          "timezone": "timezone"
+          "timezone": "timezone",
+          "inValue": "property"
       },
       "placeholder": {
+          "varName": ".var",
+          "varSize": "bytes",
+          "inValue": "payload"
       },
       "varTyp": {
         "BOOL": "BOOL",
