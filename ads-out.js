@@ -15,7 +15,6 @@ module.exports = function (RED) {
 
       this.on("input", function(msg) {
         var value = RED.util.getMessageProperty(msg,node.outValue)
-        console.log(typeof value)
         if (value !== undefined) {
           node.adsDatasource.write(node,value)
         }
