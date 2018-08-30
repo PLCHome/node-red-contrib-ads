@@ -1,3 +1,14 @@
+### 1.1.11: Maintenance Release
+
+**Enhancements**
+
+ - 
+
+**Fixes**
+
+ - README.md wrong link CHANGELOG.md
+
+
 ### 1.1.10: Maintenance Release
 
 **Enhancements**
