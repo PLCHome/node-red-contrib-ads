@@ -1,0 +1,13 @@
+{
+  "ads-symbols": {
+      "label": {
+          "datasource": "Datasource"
+      },
+      "placeholder": {
+      },
+      "data": {
+          "SYMBOLES": "Symboles",
+          "TYPES": "Types"
+      }
+    }
+}

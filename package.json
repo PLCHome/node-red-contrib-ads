@@ -29,6 +29,7 @@
       "ads-in": "ads-in.js",
       "ads-out": "ads-out.js",
       "ads-system": "ads-system.js",
+      "ads-symbols": "ads-symbols.js",
       "ads-connection": "ads-connection.js"
     }
   },

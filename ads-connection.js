@@ -86,7 +86,7 @@ module.exports = function (RED) {
             }
           }
           if (handle.node) {
-            if (handle.node.onAdsData) {
+            if (handle.node.onAdsgetSymbols) {
               handle.node.onAdsData(handle)
             }
           }
@@ -311,6 +311,36 @@ module.exports = function (RED) {
       }
     }
     /* end write to PLC */
+
+    /* symbols from PLC */
+    node.getSymbols = function (cb) {
+      if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
+        if (node.adsClient) {
+          node.adsClient.getSymbols( function (err, symbols){
+              if (err) {
+                n.error(util.format('Ads write %s', err))
+              } else {
+                cb(symbols)
+              }
+            }, true )
+        }
+      }
+    }
+
+    node.getDatatyps = function (cb) {
+      if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
+        if (node.adsClient) {
+          node.adsClient.getDatatyps( function (err, datatyps){
+              if (err) {
+                n.error(util.format('Ads write %s', err))
+              } else {
+                cb(datatyps)
+              }
+            }, true )
+        }
+      }
+    }
+    /* end symbols from PLC */
 
     /* system Nodes */
     node.systemRegister = function (n){

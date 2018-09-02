@@ -2,7 +2,8 @@
 
 **Enhancements**
 
- - 
+ - Node for get symbols and types from ADS
+ - Nodes show Varname instead of Node-name
 
 **Fixes**
 
