@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-ads",
-  "version": "1.1.10",
+  "version": "1.1.11",
   "description": "Provides nodes to talk to Beckhoff TwinCAT PLC variables over ADS",
   "license": "MIT",
   "dependencies": {
