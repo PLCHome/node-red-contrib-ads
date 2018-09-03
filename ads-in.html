@@ -55,6 +55,11 @@
         <input type="text" id="node-input-inValue" data-i18n="[placeholder]ads-in.placeholder.inValue">
     </div>
     <div class="form-row">
+        <label>&nbsp;</label>
+        <input type="checkbox" id="node-input-useInputMsg" style="display: inline-block; width: auto; vertical-align: top;">
+        <label for="node-input-useInputMsg" style="width: 70%;"><span data-i18n="ads-in.label.useInputMsg"></span></label>
+    </div> 
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
@@ -87,6 +92,9 @@
             varSize: {
                 value: "",
                 validate: function (val) {return ($("#node-input-varTyp").val()!== "RAW") || (RED.validators.number(val) && val>0)} 
+            },
+            useInputMsg: {
+                value: false
             },
             timezone: {
                 value: "UNCHANGED",

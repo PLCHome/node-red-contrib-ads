@@ -13,6 +13,7 @@ module.exports = function (RED) {
       node.bytelength = config.varSize
       node.timezone = config.timezone
       node.inValue = config.inValue||'payload'
+      node.useInputMsg = config.useInputMsg||false
 
       node.onAdsData = function (handle){
         var msg = {}
@@ -21,7 +22,15 @@ module.exports = function (RED) {
       }
 
       this.on("input", function(msg) {
-        node.adsDatasource.read(node,node.onAdsData)
+        var outMsg = {}
+        if (node.useInputMsg) {
+          outMsg = msg
+        }
+
+        node.adsDatasource.read(node,function (handle){
+          RED.util.setMessageProperty(outMsg, node.inValue, handle.value)
+          node.send(outMsg)
+        })
       })
 
       node.on('close', function () {

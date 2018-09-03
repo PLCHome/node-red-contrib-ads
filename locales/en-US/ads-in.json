@@ -6,7 +6,8 @@
           "varTyp": "variable type",
           "varSize": "size in byte",
           "timezone": "timezone",
-          "inValue": "property"
+          "inValue": "property",
+          "useInputMsg": "add property to incoming msg"
       },
       "placeholder": {
           "varName": ".var",

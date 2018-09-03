@@ -38,3 +38,8 @@ const connectState = {
   }
 }
 exports.connectState = connectState
+
+exports.wildcardToRegExp =  function (s) {
+  return new RegExp('^' + s.replace(/[|\\{}()[\]^$+.]/g, '\\$&').replace(/[?]/g, ".").replace(/[*]/g, ".*") + '$')
+  
+}

@@ -73,7 +73,7 @@ Source Port: Normally 801 for TwinCat 2 Runtime 1 or 851 for TwinCat 3 Runtime 1
 Target Port: Normally 32905 for TwinCat 2/3
 ```
 
-#### - ads-system
+#### - ADS System
 
 Twincat ADS node that give you information about the PLC and PLC state.
 
@@ -137,19 +137,41 @@ The Name of the PLC-Device
 ###### symTab
 The PLC internal version number of the variable Händel assignment
 
-#### - ads-out
+
+#### - ADS Out
 
 Twincat ADS output node that can send values to the PLC.
 
-#### - ads-in
+Enter the name of the variable, the type and the property name. If ads is connected the value is written to the PLC
+
+
+#### - ADS In
 
 Twincat ADS input node that can recive values from the PLC.
 
-#### - ads-notification
+Enter the name of the variable, the type and the property name for the output. 
+You can still decide whether a new output with the property for the value will be created or the property will be inserted into the inputvalue and output at the output.
+
+
+#### - ADS Notification
 
 Twincat ADS input node that can automatically recive values from the PLC, if they change.
+Beckhoff says you should not have more than 510 variables monitored.
+Each time the ADS-Node is connected to the PLC, the PLC automatically sends the value once.
+
+Transmission Mode: With "cyclic", the variable is polled cyclically by the PLC and transmitted, with "onchange" the PLC monitors.
+Max Delay:  At the latest after this time, the ADS Device Notification is called. The unit is 1ms.
+Cycle Time:  The ADS server checks if the value changes in this time slice. The unit is 1ms
 
 
+#### - ADS Symbols
+
+This note loads a list of all symbols or types from the PLC when written to the input. If a string or string array is written, the output is filtered by name. Wildcards [?=char;*=chars] are possible.
+
+This example makes an file for excel.
+```json
+[{"id":"2cf4e73.bcb4f98","type":"ADS Symbols","z":"524f011a.f0bce8","name":"","datasource":"","data":"SYMBOLES","x":300,"y":740,"wires":[["9fd1a1c7.a10a6"]]},{"id":"9fd1a1c7.a10a6","type":"csv","z":"524f011a.f0bce8","name":"","sep":"\\t","hdrin":false,"hdrout":true,"multi":"one","ret":"\\r\\n","temp":"indexGroup,indexOffset,size,name,type,comment","skip":"0","x":470,"y":740,"wires":[["3f33ed7f.08d41a"]]},{"id":"3f33ed7f.08d41a","type":"file","z":"524f011a.f0bce8","name":"","filename":"symboles.xls","appendNewline":false,"createDir":false,"overwriteFile":"true","x":690,"y":740,"wires":[[]]},{"id":"cf639909.782c38","type":"inject","z":"524f011a.f0bce8","name":"all","topic":"","payload":"true","payloadType":"bool","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":130,"y":740,"wires":[["2cf4e73.bcb4f98"]]},{"id":"bb6e0397.998ca8","type":"ADS Symbols","z":"524f011a.f0bce8","name":"","datasource":"","data":"TYPES","x":300,"y":800,"wires":[["df532662.17485"]]},{"id":"afa626ac.36da48","type":"csv","z":"524f011a.f0bce8","name":"","sep":"\\t","hdrin":false,"hdrout":true,"multi":"one","ret":"\\r\\n","temp":"version,size,dataType,subItems,name,type,lBound,elements,entryIndex,entryVersion,entrySize,entryOffs,entryDataType,entryName,entryType","skip":"0","x":670,"y":800,"wires":[["ace69011.4a4f18"]]},{"id":"ace69011.4a4f18","type":"file","z":"524f011a.f0bce8","name":"","filename":"types.xls","appendNewline":false,"createDir":false,"overwriteFile":"true","x":840,"y":800,"wires":[[]]},{"id":"12d3e5af.381b3a","type":"inject","z":"524f011a.f0bce8","name":"search","topic":"","payload":"[\"typeName1*\",\"type?ame2*\"]","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":130,"y":800,"wires":[["bb6e0397.998ca8"]]},{"id":"df532662.17485","type":"function","z":"524f011a.f0bce8","name":"format for csv","func":"var outmsg = {payload:[]}\nif (Array.isArray(msg.payload)) {\n    msg.payload.map(function (data){\n        out = {\n            version: data.version,\n            hashValue: data.hashValue,\n            typeHashValue: data.typeHashValue,\n            size: data.size,\n            dataType: data.dataType,\n            subItems: data.subItems,\n            name: data.name,\n            type: data.type,\n            arrayDim: data.arrayDim,\n            comment: data.comment\n        }\n        outmsg.payload.push(out)\n        \n        if (data.array) {\n            data.array.map(function(adata) {\n                adata.name= data.name\n                outmsg.payload.push(adata)\n            })    \n        }\n\n        if (data.datatyps) {\n            data.datatyps.map(function(sdata) {\n                out = {\n                    name: data.name,\n                    entryIndex: sdata.index,\n                    entryVersion: sdata.version,\n                    entryHashValue: sdata.hashValue,\n                    entryTypeHashValue: sdata.typeHashValue,\n                    entrySize: sdata.size,\n                    entryOffs: sdata.offs,\n                    entryDataType: sdata.dataType,\n                    entryName: sdata.name,\n                    entryType: sdata.type,\n                    entryArrayDim: data.arrayDim,\n                    entryComment: sdata.comment,\n                    array: sdata.array\n                }\n                outmsg.payload.push(out)\n                \n            })    \n        }\n    })\n}\nreturn outmsg","outputs":1,"noerr":0,"x":500,"y":800,"wires":[["afa626ac.36da48"]]},{"id":"fa01d720.55c0e8","type":"inject","z":"524f011a.f0bce8","name":"all","topic":"","payload":"true","payloadType":"bool","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":130,"y":840,"wires":[["bb6e0397.998ca8"]]},{"id":"b16a18f7.e0ece8","type":"inject","z":"524f011a.f0bce8","name":"search","topic":"","payload":"[\".var1*\",\".?ar2*\"]","payloadType":"json","repeat":"","crontab":"","once":false,"onceDelay":0.1,"x":130,"y":700,"wires":[["2cf4e73.bcb4f98"]]}]
+```
 
 License (MIT)
 -------------

@@ -1,6 +1,7 @@
 module.exports = function (RED) {
   'use strict'
   var util = require('util')
+  var adsHelpers = require('./ads-helpers')
 
   function adsSymbolsNode(config) {
     RED.nodes.createNode(this, config)
@@ -23,6 +24,7 @@ module.exports = function (RED) {
       }
 
       this.on("input", function(msg) {
+        
         var call = node.adsDatasource.getDatatyps
         if (node.adscfg.data == 'SYMBOLES') {
           call = node.adsDatasource.getSymbols
@@ -30,11 +32,11 @@ module.exports = function (RED) {
 
         var ask = []
         if (typeof msg.payload === 'string') {
-          ask.push(msg.payload.toUpperCase())
+          ask.push(adsHelpers.wildcardToRegExp(msg.payload.toUpperCase()))
         } else if (Array.isArray(msg.payload)) {
           msg.payload.map(function(p){
             if (typeof p === 'string') {
-              ask.push(p.toUpperCase())
+              ask.push(adsHelpers.wildcardToRegExp(p.toUpperCase()))
             }
           })
         }
@@ -45,7 +47,7 @@ module.exports = function (RED) {
           if (ask.length > 0){
             ask.map(function(m){
               data.map(function(d){
-                if (d.name == m) {
+                if (d.name.match(m)) {
                   out.push(d)
                 }
               })
