@@ -1,3 +1,15 @@
+### 1.1.12: Maintenance Release
+
+**Enhancements**
+
+- Example for web ui with Node for get symbols and types from ADS.
+
+
+**Fixes**
+
+- README.md wrong link CHANGELOG.md
+
+
 ### 1.1.11: Maintenance Release
 
 **Enhancements**
