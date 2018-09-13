@@ -86,7 +86,7 @@ module.exports = function (RED) {
             }
           }
           if (handle.node) {
-            if (handle.node.onAdsgetSymbols) {
+            if (handle.node.onAdsData) {
               handle.node.onAdsData(handle)
             }
           }

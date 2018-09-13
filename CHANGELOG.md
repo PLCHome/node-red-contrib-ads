@@ -7,7 +7,7 @@
 
 **Fixes**
 
-- README.md wrong link CHANGELOG.md
+- ADS Notification Note wont work
 
 
 ### 1.1.11: Maintenance Release
