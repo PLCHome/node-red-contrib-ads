@@ -1,3 +1,15 @@
+### 1.1.13: Maintenance Release
+
+**Enhancements**
+
+- none
+
+
+**Fixes**
+
+- ADS ads-symbols on TC3
+
+
 ### 1.1.12: Maintenance Release
 
 **Enhancements**
