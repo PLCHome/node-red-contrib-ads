@@ -8,6 +8,7 @@
 **Fixes**
 
 - ADS ads-symbols on TC3
+- [Node.js under heavy load when connection down #6](https://github.com/ChrisHanuta/node-red-contrib-ads/issues/6)
 
 
 ### 1.1.12: Maintenance Release

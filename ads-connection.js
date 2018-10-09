@@ -37,31 +37,27 @@ module.exports = function (RED) {
       }
       startTimer(45000)
       node.adsClient = nodeads.connect(adsoptions,
-        function (err){
-          if (err) {
-            internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
-            startTimer()
-            node.error(util.format('Error Connecting ADS: %s', err))
-          } else {
-            internalSubscribeLiveTick()
-            startTimer()
-            internalSubscribeSymTab()
-            node.adsClient.readDeviceInfo(function (err,handel) {
-                if (err) {
-                  node.error(util.format('Error readDeviceInfo: %s', err))
-                } else {
-                  node.system.majorVersion = handel.majorVersion
-                  node.system.minorVersion = handel.minorVersion
-                  node.system.versionBuild = handel.versionBuild
-                  node.system.version = handel.majorVersion+'.'+handel.minorVersion+'.'+handel.versionBuild
-                  node.system.deviceName = handel.deviceName
-                  internalSystemUpdate()
-                }
-              }
-            )
-            node.adsNotificationNodes.forEach(internalSubscribe)
-            internalSetConnectState(adsHelpers.connectState.CONNECTED)
-          }
+        function (){
+          node.adsClient.readDeviceInfo(function (err,handel) {
+            if (err) {
+              node.error('Error on connect: check target NetId or routing')
+              internalSetConnectState(adsHelpers.connectState.ERROR)
+              delete(node.adsClient)
+              startTimer(20000)
+            } else {
+              node.system.majorVersion = handel.majorVersion
+              node.system.minorVersion = handel.minorVersion
+              node.system.versionBuild = handel.versionBuild
+              node.system.version = handel.majorVersion+'.'+handel.minorVersion+'.'+handel.versionBuild
+              node.system.deviceName = handel.deviceName
+              internalSystemUpdate()
+              internalSubscribeLiveTick()
+              startTimer()
+              internalSubscribeSymTab()
+              node.adsNotificationNodes.forEach(internalSubscribe)
+              internalSetConnectState(adsHelpers.connectState.CONNECTED)
+            }
+          })
         }
       )
 
@@ -100,6 +96,7 @@ module.exports = function (RED) {
             if (node.system.connectState == adsHelpers.connectState.CONNECTIG) {
               internalSetConnectState(adsHelpers.connectState.ERROR)
             }
+            delete(node.adsClient)
             startTimer(20000)
           }
         }
