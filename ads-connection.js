@@ -3,8 +3,10 @@ module.exports = function (RED) {
   var nodeads = require('node-ads-api')
   var adsHelpers = require('./ads-helpers')
   var util = require('util')
+  var debug = require('debug')('node-red-contrib-ads:adsConnectionNode')
+  var debugCyclic = require('debug')('node-red-contrib-ads:adsConnectionNode:Cyclic')
 
-  function AdsConnectionNode(config) {
+  function adsConnectionNode(config) {
     RED.nodes.createNode(this, config)
     var node = this
     node.host = config.host
@@ -16,6 +18,7 @@ module.exports = function (RED) {
     adsHelpers.checkPort(node,node.port,801)
     node.amsPortTarget = parseInt(config.amsPortTarget)
     adsHelpers.checkPort(node,node.port,32905)
+    debug('config:',node)
 
     node.system = {}
     internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
@@ -36,6 +39,7 @@ module.exports = function (RED) {
         "amsPortTarget": node.amsPortTarget
       }
       startTimer(45000)
+      debug('connect:',adsoptions)
       node.adsClient = nodeads.connect(adsoptions,
         function (){
           node.adsClient.readDeviceInfo(function (err,handel) {
@@ -44,7 +48,9 @@ module.exports = function (RED) {
               internalSetConnectState(adsHelpers.connectState.ERROR)
               delete(node.adsClient)
               startTimer(20000)
+              debug('connect:','readDeviceInfo:',err)
             } else {
+              debug('connect:','readDeviceInfo:',handel)
               node.system.majorVersion = handel.majorVersion
               node.system.minorVersion = handel.minorVersion
               node.system.versionBuild = handel.versionBuild
@@ -64,12 +70,16 @@ module.exports = function (RED) {
       node.adsClient.on('notification', function (handle){
           if (handle.indexGroup == nodeads.ADSIGRP.DEVICE_DATA &&
               handle.indexOffset == nodeads.ADSIOFFS_DEVDATA.ADSSTATE) {
+            debugCyclic('notification:','connectCheckADSSTATE:', handle.indexGroup, handle.indexGroup, 
+                           'handle.indexOffset', handle.indexOffset, 'handle.value', handle.value)
             if (node.system.connectState == adsHelpers.connectState.CONNECTED) {     
               startTimer()
             }
             internalSetAdsState(handle.value)
           } else if (handle.indexGroup == nodeads.ADSIGRP.SYM_VERSION &&
                      handle.indexOffset == 0) {
+            debug('notification:','CheckSYM_VERSION:', 'handle.indexGroup:', handle.indexGroup, 
+                           'handle.indexOffset', handle.indexOffset, 'handle.value', handle.value)
             if (node.system.symTab != handle.value) {
               node.system.symTab = handle.value
               internalSystemUpdate()
@@ -83,6 +93,9 @@ module.exports = function (RED) {
           }
           if (handle.node) {
             if (handle.node.onAdsData) {
+              debug('notification:','CheckSYM_VERSION:', 'node.id:', node.id, 'node.type', node.type, 
+                           'handle.totalByteLength', handle.totalByteLength, 'handle.symhandle', handle.symhandle, 'handle.value', handle.value, 
+                           'handle.bytelength', handle.bytelength)
               handle.node.onAdsData(handle)
             }
           }
@@ -91,6 +104,7 @@ module.exports = function (RED) {
 
 
       node.adsClient.on('error', function (error) {
+          debug('onerror:',error)
           if (error){
             node.error(util.format('Error ADS: %s', error))
             if (node.system.connectState == adsHelpers.connectState.CONNECTIG) {
@@ -109,9 +123,12 @@ module.exports = function (RED) {
     var conncetTimer
 
     function startTimer(time){
+      debugCyclic('startTimer:','clearTimeout')
       clearTimeout(conncetTimer)
       if (node.system.connectState != adsHelpers.connectState.DISCONNECTING) {
+        debugCyclic('startTimer:',time||2000)
         conncetTimer = setInterval(function () {
+          debug('startTimer:','Timeout')
           if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
             internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
           }
@@ -124,6 +141,7 @@ module.exports = function (RED) {
 
     /* for ads-notification */
     node.subscribe = function (n) {
+      debug('subscribe:',n.id, n.type)
       if (node.adsNotificationNodes.indexOf(n) < 0) {
         node.adsNotificationNodes.push(n)
       }
@@ -133,6 +151,7 @@ module.exports = function (RED) {
     }
 
     node.unsubscribe = function (n) {
+      debug('unsubscribe:',n.id, n.type)
       var index = node.adsNotificationNodes.indexOf(n)
       if (index >= 0) {
         node.adsNotificationNodes.splice(index,1)
@@ -142,12 +161,12 @@ module.exports = function (RED) {
 
     /* subscribe on PLC */
     function internalSubscribe(n){
+      debug('internalSubscribe:',n.id, n.type)
       var handle =  {
         symname: n.symname,
         transmissionMode: nodeads.NOTIFY[n.transmissionMode],
         maxDelay: n.maxDelay,
         cycleTime: n.cycleTime,
-        node: n
         }
       if (adsHelpers.isRawType(n.adstype)) {
         handle.bytelength = parseInt(n.bytelength)
@@ -162,6 +181,8 @@ module.exports = function (RED) {
         handle.useLocalTimezone = (val === "TO_LOCAL")
       }
       if (node.adsClient) {
+        debug('internalSubscribe:',handle)
+        handle.node= n
         node.adsClient.notify(handle, function(err){
           if (err){
             node.error(util.format('Ads Register Notification %s', err))
@@ -171,6 +192,7 @@ module.exports = function (RED) {
     }
 
     function internalSubscribeLiveTick(){
+      debug('internalSubscribeLiveTick:')
       var handle =  {
         indexGroup: nodeads.ADSIGRP.DEVICE_DATA,
         indexOffset: nodeads.ADSIOFFS_DEVDATA.ADSSTATE,
@@ -179,6 +201,7 @@ module.exports = function (RED) {
         bytelength: nodeads.WORD
       }
       if (node.adsClient) {
+        debug('internalSubscribeLiveTick:',handle)
         node.adsClient.notify(handle, function(err){
           if (err){
             node.error(util.format('Ads Register Notification live tick %s', err))
@@ -188,6 +211,7 @@ module.exports = function (RED) {
     }
 
     function internalSubscribeSymTab(){
+      debug('internalSubscribeLiveTick:')
       var handle =  {
         indexGroup: nodeads.ADSIGRP.SYM_VERSION,
         indexOffset: 0,
@@ -197,6 +221,7 @@ module.exports = function (RED) {
       }
 
       if (node.adsClient) {
+        debug('internalSubscribeSymTab:',handle)
         node.adsClient.notify(handle, function(err){
           if (err){
             node.error(util.format('Ads Register Notification Sym Tab %s', err))
@@ -208,6 +233,7 @@ module.exports = function (RED) {
 
     /* write to PLC */
     node.write = function (n, value) {
+      debug('write:',n.id, n.type)
       if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
           symname: n.symname,
@@ -227,6 +253,7 @@ module.exports = function (RED) {
           handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
         }
         if (node.adsClient) {
+          debug('write:',handle)
           node.adsClient.write(handle,
             function (err){
               if (err) {
@@ -240,6 +267,7 @@ module.exports = function (RED) {
 
     /* read from PLC */
     node.read = function (n, cb) {
+      debug('read:',n.id, n.type)
       if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
           symname: n.symname,
@@ -258,6 +286,7 @@ module.exports = function (RED) {
           handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
         }
         if (node.adsClient) {
+          debug('read:',handle)
           node.adsClient.read(handle, function(err, handle){
             if (err) {
               node.error(util.format('Ads read %s', err))
@@ -272,12 +301,14 @@ module.exports = function (RED) {
 
     /* node RIP */
     node.on('close', function (done) {
+      debug('close:')
       node.adsNotificationNodes = []
       node.systemNodes = []
       internalRestart(done)
     })
 
     function internalRestart(done) {
+      debug('internalRestart:','enter')
       internalSetConnectState(adsHelpers.connectState.DISCONNECTING)
       clearTimeout(conncetTimer)
       if (node.adsClient) {
@@ -286,10 +317,12 @@ module.exports = function (RED) {
           delete (node.adsClient)
           var sleep = setInterval(function () {
             clearTimeout(sleep)
+            debug('internalRestart:','done')
             done()
           },1000)
         })
       } else {
+        debug('internalRestart:','done no adsClient')
         internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
         done()
       }
@@ -298,7 +331,9 @@ module.exports = function (RED) {
 
     /* set Note State */
     function internalSetConnectState (cState) {
+      debug('internalSetConnectState:','new state:'+cState,'old state:'+node.system.connectState)
       if ((!node.system.connectState) || node.system.connectState != cState) {
+        debug('internalSetConnectState:','set state:'+cState)
         node.system.connectState = cState
         node.system.connectStateText = adsHelpers.connectState.fromId(cState)
         if (node.system.connectState != adsHelpers.connectState.CONNECTED) {
@@ -311,9 +346,11 @@ module.exports = function (RED) {
 
     /* symbols from PLC */
     node.getSymbols = function (cb) {
+      debug('getSymbols:','enter')
       if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         if (node.adsClient) {
           node.adsClient.getSymbols( function (err, symbols){
+              debug('getSymbols:',err,symbols)
               if (err) {
                 n.error(util.format('Ads write %s', err))
               } else {
@@ -325,9 +362,11 @@ module.exports = function (RED) {
     }
 
     node.getDatatyps = function (cb) {
+      debug('getDatatyps:','enter')
       if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         if (node.adsClient) {
           node.adsClient.getDatatyps( function (err, datatyps){
+              debug('getDatatyps:',err,datatyps)
               if (err) {
                 n.error(util.format('Ads write %s', err))
               } else {
@@ -341,6 +380,7 @@ module.exports = function (RED) {
 
     /* system Nodes */
     node.systemRegister = function (n){
+      debug('systemRegister:',n.id,n.type)
       if (node.systemNodes.indexOf(n) < 0) {
         node.systemNodes.push(n)
         node.systemUpdate(n)
@@ -349,6 +389,7 @@ module.exports = function (RED) {
     }
 
     node.systemUnregister = function (n){
+      debug('systemUnregister:',n.id,n.type)
       var index = node.systemNodes.indexOf(n)
       if (index >= 0) {
         node.systemNodes.splice(index,1)
@@ -356,12 +397,14 @@ module.exports = function (RED) {
     }
     
     function internalSystemUpdate () {
+      debug('internalSystemUpdate:','enter')
       if (!(node.timerSU)) {
         node.timerSU = setInterval(function () {
           clearTimeout(node.timerSU)
           delete(node.timerSU)
           if (node.systemNodes) {
             node.systemNodes.forEach(function(n){
+                debug('internalSystemUpdate:','call',n.id,n.type)
                 node.systemUpdate(n)
                 setSystemStatus(n)
               })
@@ -372,11 +415,13 @@ module.exports = function (RED) {
 
     node.systemUpdate = function (n) {
       if (n) {
+        debug('systemUpdate:','enter',n.id,n.type)
         n.onData(node.system)
       }
     }
 
     function setSystemStatus (n) {
+      debug('setSystemStatus:','enter')
       var fillSystem = "grey"
       var shapeSystem = "ring"
       var textSystem = node.system.connectStateText
@@ -427,11 +472,14 @@ module.exports = function (RED) {
           }
           break
       }
+      debug('setSystemStatus:',n.id,n.type,{fill:fillSystem,shape:shapeSystem,text:textSystem})
       n.status({fill:fillSystem,shape:shapeSystem,text:textSystem})
     }
 
     function internalSetAdsState(adsState) {
+      debugCyclic('internalSetAdsState:','new State:',adsState,'old State:',node.system.adsState)
       if ((!node.system.adsState) || node.system.adsState != adsState) {
+        debug('internalSetAdsState:','set State:',adsState)
         node.system.adsState = adsState
         node.system.adsStateText = nodeads.ADSSTATE.fromId(adsState)
         internalSystemUpdate()
@@ -441,6 +489,6 @@ module.exports = function (RED) {
     /* end system Nodes*/
     connect()
   }
-  RED.nodes.registerType('ads-connection', AdsConnectionNode)
+  RED.nodes.registerType('ads-connection', adsConnectionNode)
 
 }

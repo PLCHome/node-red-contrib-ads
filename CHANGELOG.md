@@ -2,13 +2,25 @@
 
 **Enhancements**
 
-- none
+- debug added 
+```
+  debug=node-red-contrib-ads:*
+  debug=node-red-contrib-ads:*,-node-red-contrib-ads:adsConnectionNode:Cyclic
+  debug=node-red-contrib-ads:adsConnectionNode
+  debug=node-red-contrib-ads:adsConnectionNode:Cyclic
+  debug=node-red-contrib-ads:adsNotificationNode
+  debug=node-red-contrib-ads:adsInNode
+  debug=node-red-contrib-ads:adsOutNode
+  debug=node-red-contrib-ads:adsSystemNode
+  debug=node-red-contrib-ads:adsSymbolsNode
+```
 
 
 **Fixes**
 
 - ADS ads-symbols on TC3
 - [Node.js under heavy load when connection down #6](https://github.com/ChrisHanuta/node-red-contrib-ads/issues/6)
+- node-ads-api 1.4.7: Notification result may be empty when the connection is closed
 
 
 ### 1.1.12: Maintenance Release
@@ -44,6 +56,7 @@
 
 - Revision README.md
 - Message property for ADS-OUT/ADS-NOTIFICATION 
+
 
 **Fixes**
 

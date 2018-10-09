@@ -1,6 +1,7 @@
 module.exports = function (RED) {
   'use strict'
 //  var util = require('util')
+  var debug = require('debug')('node-red-contrib-ads:adsNotificationNode')
 
   function adsNotificationNode(config) {
     RED.nodes.createNode(this, config)
@@ -16,11 +17,14 @@ module.exports = function (RED) {
       node.maxDelay = config.maxDelay
       node.cycleTime = config.cycleTime
       node.property = config.property||'payload'
+      debug('config:',node)
 
       node.onAdsData = function (handle){
+        debug('onAdsData:','node.id',node.id,'node.symname',node.symname,'handle.value',handle.value)
         var msg = {}
         RED.util.setMessageProperty(msg, node.property, handle.value)
         node.send(msg)
+        debug('onAdsData:','node.id',node.id,'node.symname',node.symname,'msg',msg)
 //        node.setStatus()
       }
 
@@ -47,6 +51,7 @@ module.exports = function (RED) {
       node.adsDatasource.subscribe(node)
 
       node.on('close', function () {
+        debug('close:','enter')
         node.adsDatasource.unsubscribe(node)
       })
 
