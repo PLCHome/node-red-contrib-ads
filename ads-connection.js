@@ -27,6 +27,13 @@ module.exports = function (RED) {
     node.adsNotificationNodes = []
     node.systemNodes = []
 
+    function removeClient(){
+      debug('removeClient:','Client:',!(!node.adsClient),'symbolsCache:',!(!node.symbolsCache),'datatypsCache:',!(!node.datatypsCache))
+      delete(node.adsClient)
+      delete(node.symbolsCache)
+      delete(node.datatypsCache)
+    }
+    
     /* connect to PLC */
     function connect() {
       internalSetConnectState(adsHelpers.connectState.CONNECTIG)
@@ -40,13 +47,14 @@ module.exports = function (RED) {
       }
       startTimer(45000)
       debug('connect:',adsoptions)
+      removeClient()
       node.adsClient = nodeads.connect(adsoptions,
         function (){
           node.adsClient.readDeviceInfo(function (err,handel) {
             if (err) {
+              removeClient()
               node.error('Error on connect: check target NetId or routing')
               internalSetConnectState(adsHelpers.connectState.ERROR)
-              delete(node.adsClient)
               startTimer(20000)
               debug('connect:','readDeviceInfo:',err)
             } else {
@@ -110,7 +118,7 @@ module.exports = function (RED) {
             if (node.system.connectState == adsHelpers.connectState.CONNECTIG) {
               internalSetConnectState(adsHelpers.connectState.ERROR)
             }
-            delete(node.adsClient)
+            removeClient()
             startTimer(20000)
           }
         }
@@ -314,7 +322,7 @@ module.exports = function (RED) {
       if (node.adsClient) {
         node.adsClient.end(function (){
           internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
-          delete (node.adsClient)
+          removeClient()
           var sleep = setInterval(function () {
             clearTimeout(sleep)
             debug('internalRestart:','done')
@@ -345,34 +353,46 @@ module.exports = function (RED) {
     /* end write to PLC */
 
     /* symbols from PLC */
-    node.getSymbols = function (cb) {
+    node.getSymbols = function (force,cb) {
       debug('getSymbols:','enter')
-      if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
-        if (node.adsClient) {
-          node.adsClient.getSymbols( function (err, symbols){
+      if (!force && (node.symbolsCache)) {
+        debug('getSymbols by cache')
+        cb(node.symbolsCache)
+      } else {
+        if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
+          if (node.adsClient) {
+            node.adsClient.getSymbols( function (err, symbols){
               debug('getSymbols:',err,symbols)
               if (err) {
-                n.error(util.format('Ads write %s', err))
+                n.error(util.format('Ads Symbols %s', err))
               } else {
+                node.symbolsCache = symbols
                 cb(symbols)
               }
             }, true )
+          }
         }
       }
     }
 
-    node.getDatatyps = function (cb) {
+    node.getDatatyps = function (force,cb) {
       debug('getDatatyps:','enter')
-      if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
-        if (node.adsClient) {
-          node.adsClient.getDatatyps( function (err, datatyps){
+      if (!force && (node.datatypsCache)) {
+        debug('getDatatyps by cache')
+        cb(node.datatypsCache)
+      } else {
+        if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
+          if (node.adsClient) {
+            node.adsClient.getDatatyps( function (err, datatyps){
               debug('getDatatyps:',err,datatyps)
               if (err) {
-                n.error(util.format('Ads write %s', err))
+                n.error(util.format('Ads Datatyps %s', err))
               } else {
+                node.datatypsCache = datatyps
                 cb(datatyps)
               }
             }, true )
+          }
         }
       }
     }

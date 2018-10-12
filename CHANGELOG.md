@@ -1,5 +1,10 @@
 ### 1.1.14: Maintenance Release
 
+**Enhancements**
+
+- Cache datatyps and symbols
+
+
 **Fixes**
 
 - Exception when use Time or Date on ADS-NOTIFICATION

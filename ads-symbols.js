@@ -13,7 +13,8 @@ module.exports = function (RED) {
       node.adscfg = {
         symname: config.varName,
         adstype: config.varTyp,
-        data: config.data
+        data: config.data,
+        force: config.force || false
       }
       debug('config:',node)
 
@@ -44,7 +45,7 @@ module.exports = function (RED) {
             }
           })
         }
-        call(function (data) {
+        call(node.adscfg.force, function (data) {
           
           
           var out = []

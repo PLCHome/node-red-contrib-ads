@@ -1,5 +1,8 @@
 # node-red-contrib-ads
 
+> A Node-RED implementation for the Twincat ADS protocol.
+> (Twincat and ADS provided by Beckhoff &copy;. I'm not affiliated.)
+
 Beckhoff TwinCat ADS support for Node-Red. Provides nodes to talk to TwinCat PLC variables over ADS.
 
 Uses the NODE-ADS library for Node.JS (https://www.npmjs.com/package/node-ads).

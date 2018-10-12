@@ -1,7 +1,9 @@
 {
   "ads-symbols": {
       "label": {
-          "datasource": "Datasource"
+          "datasource": "Datasource",
+          "data": "read what",
+          "force": "force read from PLC"
       },
       "placeholder": {
       },
