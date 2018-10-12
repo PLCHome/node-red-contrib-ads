@@ -178,7 +178,7 @@ module.exports = function (RED) {
         }
       }
       if (adsHelpers.isTimezoneType(n.adstype)) {
-        handle.useLocalTimezone = (val === "TO_LOCAL")
+        handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
       }
       if (node.adsClient) {
         debug('internalSubscribe:',handle)

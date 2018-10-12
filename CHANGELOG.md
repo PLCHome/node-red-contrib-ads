@@ -1,5 +1,12 @@
 ### 1.1.13: Maintenance Release
 
+**Fixes**
+
+- Exception when use Time or Date on ADS-NOTIFICATION
+
+
+### 1.1.13: Maintenance Release
+
 **Enhancements**
 
 - debug added 
