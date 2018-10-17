@@ -54,6 +54,10 @@
         <input type="text" id="node-input-outValue" data-i18n="[placeholder]ads-out.placeholder.outValue">
     </div>
     <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> <span data-i18n="ads-out.label.topic"></span></label>
+        <input type="text" id="node-input-topic" data-i18n="[placeholder]ads-out.placeholder.topic">
+    </div>
+    <div class="form-row">
         <label for="node-input-name"><i class="fa fa-tag"></i> <span data-i18n="node-red:common.label.name"></span></label>
         <input type="text" id="node-input-name" data-i18n="[placeholder]node-red:common.label.name">
     </div>
@@ -97,6 +101,10 @@
                                                    val !== "DATE_AND_TIME" &&
                                                    val !== "DT")
                                                || (val === "UNCHANGED") || (val === "TO_LOCAL"))} 
+            },
+            topic: {
+                value: "",
+                required: false
             }
         },
         inputs: 1,

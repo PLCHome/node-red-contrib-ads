@@ -13,12 +13,14 @@ module.exports = function (RED) {
       node.bytelength = config.varSize
       node.timezone = config.timezone
       node.outValue = config.outValue||'payload'
+      node.topic = config.topic||''
+      node.hasTopic = node.topic.length > 0
       debug('config:',node)
 
       this.on("input", function(msg) {
         debug('adsNotificationNode:','onAdsData:','node.id',node.id,'node.symname',node.symname,'msg',msg)
         var value = RED.util.getMessageProperty(msg,node.outValue)
-        if (value !== undefined) {
+        if (value !== undefined && (!node.hasTopic || node.topic == msg.topic)) {
           node.adsDatasource.write(node,value)
         }
       })

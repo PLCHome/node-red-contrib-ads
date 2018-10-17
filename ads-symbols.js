@@ -11,11 +11,11 @@ module.exports = function (RED) {
     node.adsDatasource = RED.nodes.getNode(config.datasource)
     if (node.adsDatasource) {
       node.adscfg = {
-        symname: config.varName,
-        adstype: config.varTyp,
         data: config.data,
-        force: config.force || false
+        force: config.force || false,
+        topic: config.topic ||''
       }
+      node.adscfg.hasTopic = node.adscfg.topic.length > 0
       debug('config:',node)
 
 
@@ -23,6 +23,9 @@ module.exports = function (RED) {
         debug('onData:','node.id',node.id,'node.type',node.type,'data',data)
         const msg = {
           payload: data
+        }
+        if (node.adscfg.hasTopic) {
+          msg.topic = node.adscfg.topic
         }
         node.send(msg)
       }

@@ -6,12 +6,14 @@
           "varTyp": "variable type",
           "outValue": "property",
           "varSize": "size in byte",
-          "timezone": "timezone"
+          "timezone": "timezone",
+          "topic": "topic"
       },
       "placeholder": {
           "varName": ".var",
           "outValue": "payload",
-          "varSize": "byte"
+          "varSize": "byte",
+          "topic": "enter a topic"
       },
       "varTyp": {
         "BOOL": "BOOL",

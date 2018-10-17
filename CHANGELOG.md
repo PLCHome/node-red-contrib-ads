@@ -3,6 +3,8 @@
 **Enhancements**
 
 - Cache datatyps and symbols
+- Topic added for all nodes.
+- If a topic is entered at ADS-OUT, the value is only sent if the topic is the same.
 
 
 **Fixes**

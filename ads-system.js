@@ -9,16 +9,17 @@ module.exports = function (RED) {
 
     node.adsDatasource = RED.nodes.getNode(config.datasource)
     if (node.adsDatasource) {
-      var adscfg = {
-        symname: config.varName,
-        adstype: config.varTyp
-      }
+      node.topic = config.topic||''
+      node.hasTopic = node.topic.length > 0
       debug('config:',node)
 
 
       node.onData = function (data){
         const msg = {
           payload: data
+        }
+        if (node.hasTopic) {
+          msg.topic = node.topic
         }
         node.send(msg)
         debug('onData:','node.id',node.id,'node.type',node.type,'msg',msg)

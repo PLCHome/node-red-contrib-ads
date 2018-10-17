@@ -3,9 +3,11 @@
       "label": {
           "datasource": "Datasource",
           "data": "read what",
-          "force": "force read from PLC"
+          "force": "force read from PLC",
+          "topic": "topic"
       },
       "placeholder": {
+          "topic": "enter a topic"
       },
       "data": {
           "SYMBOLES": "Symboles",

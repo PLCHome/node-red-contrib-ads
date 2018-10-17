@@ -7,12 +7,14 @@
           "varSize": "size in byte",
           "timezone": "timezone",
           "inValue": "property",
-          "useInputMsg": "add property to incoming msg"
+          "useInputMsg": "add property to incoming msg",
+          "topic": "topic"
       },
       "placeholder": {
           "varName": ".var",
           "varSize": "bytes",
-          "inValue": "payload"
+          "inValue": "payload",
+          "topic": "enter a topic"
       },
       "varTyp": {
         "BOOL": "BOOL",

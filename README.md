@@ -147,6 +147,8 @@ Twincat ADS output node that can send values to the PLC.
 
 Enter the name of the variable, the type and the property name. If ads is connected the value is written to the PLC
 
+If a topic is entered, the value is only sent if the topic is the same.
+
 
 #### - ADS In
 

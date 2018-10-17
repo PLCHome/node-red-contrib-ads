@@ -9,14 +9,16 @@
           "transmissionMode": "transmission mode",
           "maxDelay": "max delay [ms]",
           "cycleTime": "cycle time [ms]",
-          "property": "property"
+          "property": "property",
+          "topic": "topic"
       },
       "placeholder": {
           "varName": ".var",
           "varSize": "bytes",
           "maxDelay": "Latest time (in ms) after which the event has finished",
           "cycleTime": "Time (in ms) after which the PLC server checks whether the variable has changed",
-          "property": "payload"
+          "property": "payload",
+          "topic": "enter a topic"
       },
       "varTyp": {
         "BOOL": "BOOL",

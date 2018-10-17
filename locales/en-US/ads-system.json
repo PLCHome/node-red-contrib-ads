@@ -1,9 +1,11 @@
 {
   "ads-system": {
       "label": {
-          "datasource": "Datasource"
+          "datasource": "Datasource",
+          "topic": "topic"
       },
       "placeholder": {
+          "topic": "enter a topic"
       }
     }
 }
