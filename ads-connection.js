@@ -158,11 +158,22 @@ module.exports = function (RED) {
       }
     }
 
-    node.unsubscribe = function (n) {
-      debug('unsubscribe:',n.id, n.type)
+    node.unsubscribe = function (n,cb) {
+      debug('unsubscribe:',n.id, n.type, n.notifyHandle)
       var index = node.adsNotificationNodes.indexOf(n)
       if (index >= 0) {
         node.adsNotificationNodes.splice(index,1)
+      }
+      if (n.notifyHandle !== undefined) {
+        var handle =  {
+          notifyHandle: n.notifyHandle
+        }
+        node.adsClient.releaseNotificationHandle(handle, function() {
+          delete(n.notifyHandle)
+          if (cb){
+            cb()
+          }
+        })
       }
     }
     /* end for ads-notification */
@@ -194,6 +205,8 @@ module.exports = function (RED) {
         node.adsClient.notify(handle, function(err){
           if (err){
             node.error(util.format('Ads Register Notification %s', err))
+          } else {
+            n.notifyHandle = handle.notifyHandle
           }
         })
       }
