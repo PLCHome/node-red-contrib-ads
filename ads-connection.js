@@ -134,14 +134,14 @@ module.exports = function (RED) {
       debugCyclic('startTimer:','clearTimeout')
       clearTimeout(conncetTimer)
       if (node.system.connectState != adsHelpers.connectState.DISCONNECTING) {
-        debugCyclic('startTimer:',time||2000)
+        debugCyclic('startTimer:',time||10000)
         conncetTimer = setInterval(function () {
           debug('startTimer:','Timeout')
           if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
             internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
           }
           internalRestart(connect)
-        },time||2000)
+        },time||10000)
       }
     }
     /* needs internalSubscribeLiveTick */

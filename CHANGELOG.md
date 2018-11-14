@@ -8,6 +8,7 @@
 **Fixes**
 
 - Release ADS-NOTIFICATION on deploy modified Node / modified Flows
+- PLC relieved, live sign increased to 10 sec.
 
 
 ### 1.1.14: Maintenance Release
