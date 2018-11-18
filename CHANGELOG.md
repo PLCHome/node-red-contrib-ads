@@ -2,7 +2,7 @@
 
 **Fixes**
 
-- ads out, ads in: override intern config with msg.config: corrected varType
+- ads out, ads in: override intern config with msg.config: corrected varType and timezone
 
 
 ### 1.1.15: Maintenance Release
