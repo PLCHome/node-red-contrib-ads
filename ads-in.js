@@ -57,17 +57,17 @@ module.exports = function (RED) {
 
         cfg.hasTopic = cfg.topic.length > 0
         var outMsg = {}
-        if (node.useInputMsg) {
+        if (cfg.useInputMsg) {
           outMsg = Object.assign({},msg)
         }
 
-        node.adsDatasource.read(node,cfg,function (handle){
-          RED.util.setMessageProperty(outMsg, node.inValue, handle.value)
-          if (node.hasTopic) {
-            outMsg.topic = node.topic
+        node.adsDatasource.read(node, cfg, function (handle){
+          RED.util.setMessageProperty(outMsg, cfg.inValue, handle.value)
+          if (cfg.hasTopic) {
+            outMsg.topic = cfg.topic
           }
           node.send(outMsg)
-          debug('input:','node.id',node.id,'node.symname',node.symname,'outMsg',outMsg)
+          debug('input:','node.id',node.id,'cfg.symname',cfg.symname,'outMsg',outMsg)
         })
       })
 
