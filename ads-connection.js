@@ -24,7 +24,8 @@ module.exports = function (RED) {
     internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
     internalSetAdsState(nodeads.ADSSTATE.INVALID)
 
-    node.adsNotificationNodes = []
+    node.notificationNodes = []
+    node.notificationSubscribed = {}
     node.systemNodes = []
 
     function removeClient(){
@@ -68,7 +69,7 @@ module.exports = function (RED) {
               internalSubscribeLiveTick()
               startTimer()
               internalSubscribeSymTab()
-              node.adsNotificationNodes.forEach(internalSubscribe)
+              node.notificationNodes.forEach(internalSubscribe)
               internalSetConnectState(adsHelpers.connectState.CONNECTED)
             }
           })
@@ -99,13 +100,15 @@ module.exports = function (RED) {
               internalRestart(connect)
             }
           }
-          if (handle.node) {
-            if (handle.node.onAdsData) {
-              debug('notification:','CheckSYM_VERSION:', 'node.id:', node.id, 'node.type', node.type, 
-                           'handle.totalByteLength', handle.totalByteLength, 'handle.symhandle', handle.symhandle, 'handle.value', handle.value, 
-                           'handle.bytelength', handle.bytelength)
-              handle.node.onAdsData(handle)
-            }
+          if (node.notificationSubscribed[handle.symname]) {
+            debug('notification:',handle.symname, 'handle.notifyHandle', handle.notifyHandle,
+                         'handle.totalByteLength', handle.totalByteLength, 'handle.symhandle', handle.symhandle, 'handle.value', handle.value, 
+                         'handle.bytelength', handle.bytelength)
+            node.notificationSubscribed[handle.symname].map((n)=> {
+              if (n.onAdsData) {
+                n.onAdsData(handle)
+              }
+            })
           }
         }
       )
@@ -150,8 +153,8 @@ module.exports = function (RED) {
     /* for ads-notification */
     node.subscribe = function (n) {
       debug('subscribe:',n.id, n.type)
-      if (node.adsNotificationNodes.indexOf(n) < 0) {
-        node.adsNotificationNodes.push(n)
+      if (node.notificationNodes.indexOf(n) < 0) {
+        node.notificationNodes.push(n)
       }
       if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         internalSubscribe(n)
@@ -160,20 +163,34 @@ module.exports = function (RED) {
 
     node.unsubscribe = function (n,cb) {
       debug('unsubscribe:',n.id, n.type, n.notifyHandle)
-      var index = node.adsNotificationNodes.indexOf(n)
+      var index = node.notificationNodes.indexOf(n)
       if (index >= 0) {
-        node.adsNotificationNodes.splice(index,1)
+        node.notificationNodes.splice(index,1)
       }
-      if (n.notifyHandle !== undefined) {
+      if ((node.notificationSubscribed[n.symname])){
+        var index = node.notificationSubscribed[n.symname].indexOf(n)
+        if (index >= 0) {
+          node.notificationSubscribed[n.symname].splice(index,1)
+        }
+        if (!node.notificationSubscribed[n.symname].length){
+          delete node.notificationSubscribed[n.symname]
+        }
+      }
+      if (n.notifyHandle !== undefined && (!node.notificationSubscribed[n.symname])) {
         var handle =  {
           notifyHandle: n.notifyHandle
         }
-        node.adsClient.releaseNotificationHandle(handle, function() {
-          delete(n.notifyHandle)
-          if (cb){
-            cb()
-          }
-        })
+        if (node.adsClient) {
+          node.adsClient.releaseNotificationHandle(handle, function() {
+            delete(n.notifyHandle)
+            debug('unsubscribe: done')
+            if (cb){
+              cb()
+            }
+          })
+        }
+      } else {
+        debug('unsubscribe: wait')
       }
     }
     /* end for ads-notification */
@@ -199,16 +216,30 @@ module.exports = function (RED) {
       if (adsHelpers.isTimezoneType(n.adstype)) {
         handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
       }
-      if (node.adsClient) {
-        debug('internalSubscribe:',handle)
-        handle.node= n
-        node.adsClient.notify(handle, function(err){
-          if (err){
-            node.error(util.format('Ads Register Notification %s', err))
-          } else {
-            n.notifyHandle = handle.notifyHandle
-          }
-        })
+      if (!(node.notificationSubscribed[n.symname])){
+        if (node.adsClient) {
+          debug('internalSubscribe:',handle)
+          node.notificationSubscribed[n.symname]=[]
+          node.notificationSubscribed[n.symname].push(n)
+          node.adsClient.notify(handle, function(err){
+            if (err){
+              node.error(util.format('Ads Register Notification %s', err))
+            } else {
+              node.notificationSubscribed[n.symname].map((no)=>{
+                no.notifyHandle = handle.notifyHandle
+              })
+            }
+          })
+        }
+      } else {
+        var index = node.notificationSubscribed[n.symname].push(n)
+        if (node.notificationSubscribed[n.symname][0].notifyHandle) {
+          node.notificationSubscribed[n.symname].map((n)=>{
+            if (!n.notifyHandle) {
+              n.notifyHandle = node.notificationSubscribed[n.symname][0].notifyHandle
+            }
+          })
+        }
       }
     }
 
@@ -323,7 +354,7 @@ module.exports = function (RED) {
     /* node RIP */
     node.on('close', function (done) {
       debug('close:')
-      node.adsNotificationNodes = []
+      node.notificationNodes = []
       node.systemNodes = []
       internalRestart(done)
     })

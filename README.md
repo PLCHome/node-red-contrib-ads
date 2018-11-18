@@ -154,7 +154,7 @@ If a topic is entered, the value is only sent if the topic is the same.
 
 Twincat ADS input node that can recive values from the PLC.
 
-Enter the name of the variable, the type and the property name for the output. 
+Enter the name of the variable, the type and the property name for the output.
 You can still decide whether a new output with the property for the value will be created or the property will be inserted into the inputvalue and output at the output.
 
 
@@ -164,9 +164,11 @@ Twincat ADS input node that can automatically recive values from the PLC, if the
 Beckhoff says you should not have more than 510 variables monitored.
 Each time the ADS-Node is connected to the PLC, the PLC automatically sends the value once.
 
-Transmission Mode: With "cyclic", the variable is polled cyclically by the PLC and transmitted, with "onchange" the PLC monitors.
-Max Delay:  At the latest after this time, the ADS Device Notification is called. The unit is 1ms.
-Cycle Time:  The ADS server checks if the value changes in this time slice. The unit is 1ms
+Note, if you have multiple Notification with the same variable name then only one of the nodes will be registered in the PLC. Which is coincidence. therefore, the same variable may not be "cyclic" and "onchange" at the same time. Or number and bool at the same time. Please use the link node from the node red base nodes.
+
+- Transmission Mode: With "cyclic", the variable is polled cyclically by the PLC and transmitted, with "onchange" the PLC monitors.
+- Max Delay:  At the latest after this time, the ADS Device Notification is called. The unit is 1ms.
+- Cycle Time:  The ADS server checks if the value changes in this time slice. The unit is 1ms
 
 
 #### - ADS Symbols
