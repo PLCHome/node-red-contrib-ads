@@ -150,10 +150,10 @@ Enter the name of the variable, the type and the property name. If ads is connec
 If a topic is entered, the value is only sent if the topic is the same.
 
 There is an possible to override the node configuration. You can add an property config to the message object. Not all configuration properties need to be overridden.
-- `config.varName`: (String) override the variable name
-- `config.varType`: (String) override the variable type
+- `config.varName`: (string) override the variable name
+- `config.varType`: (string) override the variable type
 - `config.varSize`: (integer) the length on RAW and STRING type
-- `config.timezone`: (bool) only on date and time type
+- `config.timezone`: (string) only on date and time type 'TO_LOCAL' or 'UNCHANGED'
 - `config.outProperty`: (string) the property for the outvalue
 - `config.topic`: (string) the topic being checked against the message topic. It can be '' to delete an topic.
 
@@ -166,10 +166,10 @@ Enter the name of the variable, the type and the property name for the output.
 You can still decide whether a new output with the property for the value will be created or the property will be inserted into the inputvalue and output at the output.
 
 There is an possible to override the node configuration. You can add an property config to the message object. Not all configuration properties need to be overridden.
-- `config.varName`: (String) override the variable name
-- `config.varType`: (String) override the variable type
+- `config.varName`: (string) override the variable name
+- `config.varType`: (string) override the variable type
 - `config.varSize`: (integer) the length on RAW and STRING type
-- `config.timezone`: (bool) only on date and time type
+- `config.timezone`: (string) only on date and time type 'TO_LOCAL' or 'UNCHANGED'
 - `config.inProperty`: (string) the property for the outvalue
 - `config.useInputMsg`: (bool) the input message will be used to build the out message or an new message will be build.
 - `config.topic`: (string) the topic being checked against the message topic. It can be '' to delete an topic.

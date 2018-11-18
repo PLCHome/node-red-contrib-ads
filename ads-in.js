@@ -35,7 +35,7 @@ module.exports = function (RED) {
           if (typeof msg.config.varName !== 'undefined') {
             cfg.symname = msg.config.varName
           }
-          if (typeof msg.config.varTyp !== 'undefined') {
+          if (typeof msg.config.varType !== 'undefined') {
             cfg.adstype = msg.config.varType
           }
           if (typeof msg.config.varSize !== 'undefined') {

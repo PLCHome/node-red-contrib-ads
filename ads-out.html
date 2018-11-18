@@ -1,10 +1,10 @@
 <script type="text/x-red" data-help-name="ADS Output">
     <p>Node for sending data to Beckhoff TwinCAT ADS</p>
     <p>There is an possible to override the node configuration. You can add an property config to the message object. Not all configuration properties need to be overridden.</p>
-    <li>config.varName: (String) override the variable name</li>
-    <li>config.varType: (String) override the variable type</li>
+    <li>config.varName: (string) override the variable name</li>
+    <li>config.varType: (string) override the variable type</li>
     <li>config.varSize: (integer) the length on RAW and STRING type</li>
-    <li>config.timezone: (bool) only on date and time type</li>
+    <li>config.timezone: (string) only on date and time type 'TO_LOCAL' or 'UNCHANGED'</li>
     <li>config.outProperty: (string) the property for the outvalue</li>
     <li>config.topic: (string) the topic being checked against the message topic. It can be '' to delete an topic.</li>    
 </script>

@@ -11,7 +11,7 @@ module.exports = function (RED) {
       debug('config:',config)
 
       this.on("input", function(msg) {
-        debug('adsNotificationNode:','onAdsData:','node.id',node.id,'node.symname',node.symname,'msg',msg)
+        debug('adsNotificationNode:','onAdsData:','node.id',node.id,'msg',msg)
         var cfg = {
           symname: config.varName,
           adstype: config.varTyp,
@@ -25,7 +25,7 @@ module.exports = function (RED) {
           if (typeof msg.config.varName !== 'undefined') {
             cfg.symname = msg.config.varName
           }
-          if (typeof msg.config.varTyp !== 'undefined') {
+          if (typeof msg.config.varType !== 'undefined') {
             cfg.adstype = msg.config.varType
           }
           if (typeof msg.config.varSize !== 'undefined') {
@@ -42,6 +42,7 @@ module.exports = function (RED) {
           }
         }
         cfg.hasTopic = cfg.topic.length > 0
+        debug('adsNotificationNode:','onAdsData:','node.id',node.id,'cfg',cfg)
         var value = RED.util.getMessageProperty(msg,(cfg.outValue||'payload'))
         if (value !== undefined && (!cfg.hasTopic || cfg.topic == msg.topic)) {
           node.adsDatasource.write(node,cfg,value)

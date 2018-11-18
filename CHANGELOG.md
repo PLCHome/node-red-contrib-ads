@@ -1,3 +1,10 @@
+### 1.1.16: Maintenance Release
+
+**Fixes**
+
+- ads out, ads in: override intern config with msg.config: corrected varType
+
+
 ### 1.1.15: Maintenance Release
 
 **Enhancements**
