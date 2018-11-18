@@ -284,25 +284,25 @@ module.exports = function (RED) {
     /* end subscribe on PLC */
 
     /* write to PLC */
-    node.write = function (n, value) {
+    node.write = function (n, config, value) {
       debug('write:',n.id, n.type)
       if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
-          symname: n.symname,
+          symname: config.symname,
           propname: 'value',
           value: value
         }
-        if (adsHelpers.isRawType(n.adstype)) {
-          handle.bytelength = parseInt(n.bytelength)
+        if (adsHelpers.isRawType(config.adstype)) {
+          handle.bytelength = parseInt(config.bytelength)
         } else {
-          if (adsHelpers.isStringType(n.adstype) && n.bytelength) {
-            handle.bytelength = nodeads.string(parseInt(n.bytelength))
+          if (adsHelpers.isStringType(config.adstype) && config.bytelength) {
+            handle.bytelength = nodeads.string(parseInt(config.bytelength))
           } else {
-            handle.bytelength = nodeads[n.adstype]
+            handle.bytelength = nodeads[config.adstype]
           }
         }
-        if (adsHelpers.isTimezoneType(n.adstype)) {
-          handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
+        if (adsHelpers.isTimezoneType(config.adstype)) {
+          handle.useLocalTimezone = (config.timezone === "TO_LOCAL")
         }
         if (node.adsClient) {
           debug('write:',handle)
@@ -318,24 +318,24 @@ module.exports = function (RED) {
     /* end write to PLC */
 
     /* read from PLC */
-    node.read = function (n, cb) {
+    node.read = function (n, config, cb) {
       debug('read:',n.id, n.type)
       if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
-          symname: n.symname,
+          symname: config.symname,
           propname: 'value'
         }
-        if (adsHelpers.isRawType(n.adstype)) {
-          handle.bytelength = parseInt(n.bytelength)
+        if (adsHelpers.isRawType(config.adstype)) {
+          handle.bytelength = parseInt(config.bytelength)
         } else {
-          if (adsHelpers.isStringType(n.adstype) && n.bytelength) {
-            handle.bytelength = nodeads.string(parseInt(n.bytelength))
+          if (adsHelpers.isStringType(config.adstype) && config.bytelength) {
+            handle.bytelength = nodeads.string(parseInt(config.bytelength))
           } else {
-            handle.bytelength = nodeads[n.adstype]
+            handle.bytelength = nodeads[config.adstype]
           }
         }
-        if (adsHelpers.isTimezoneType(n.adstype)) {
-          handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
+        if (adsHelpers.isTimezoneType(config.adstype)) {
+          handle.useLocalTimezone = (config.timezone === "TO_LOCAL")
         }
         if (node.adsClient) {
           debug('read:',handle)

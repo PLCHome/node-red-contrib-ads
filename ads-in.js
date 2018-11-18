@@ -9,15 +9,7 @@ module.exports = function (RED) {
 
     node.adsDatasource = RED.nodes.getNode(config.datasource)
     if (node.adsDatasource) {
-      node.symname = config.varName
-      node.adstype = config.varTyp
-      node.bytelength = config.varSize
-      node.timezone = config.timezone
-      node.inValue = config.inValue||'payload'
-      node.useInputMsg = config.useInputMsg||false
-      node.topic = config.topic||''
-      node.hasTopic = node.topic.length > 0
-      debug('config:',node)
+      debug('config:',config)
 
       //node.onAdsData = function (handle){
       //  debug('onAdsData:','node.id',node.id,'node.symname',node.symname,'handle.value',handle.value)
@@ -29,12 +21,47 @@ module.exports = function (RED) {
 
       this.on("input", function(msg) {
         debug('input:',msg)
+        var cfg = {
+         symname: config.varName,
+         adstype: config.varTyp,
+         bytelength: config.varSize,
+         timezone: config.timezone,
+         inValue: (config.inValue||'payload'),
+         useInputMsg: (config.useInputMsg||false),
+         topic: (config.topic||'')
+        }
+
+        if (msg.config) {
+          if (typeof msg.config.varName !== 'undefined') {
+            cfg.symname = msg.config.varName
+          }
+          if (typeof msg.config.varTyp !== 'undefined') {
+            cfg.adstype = msg.config.varType
+          }
+          if (typeof msg.config.varSize !== 'undefined') {
+            cfg.bytelength = msg.config.varSize
+          }
+          if (typeof msg.config.timezone !== 'undefined') {
+            cfg.timezone = msg.config.timezone
+          }
+          if (typeof msg.config.inProperty !== 'undefined') {
+            cfg.inValue = msg.config.inProperty
+          }
+          if (typeof msg.config.useInputMsg !== 'undefined') {
+            cfg.useInputMsg = msg.config.useInputMsg
+          }
+          if (typeof msg.config.topic !== 'undefined') {
+            cfg.topic = msg.config.topic||''
+          }
+        }
+
+        cfg.hasTopic = cfg.topic.length > 0
         var outMsg = {}
         if (node.useInputMsg) {
           outMsg = Object.assign({},msg)
         }
 
-        node.adsDatasource.read(node,function (handle){
+        node.adsDatasource.read(node,cfg,function (handle){
           RED.util.setMessageProperty(outMsg, node.inValue, handle.value)
           if (node.hasTopic) {
             outMsg.topic = node.topic

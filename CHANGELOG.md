@@ -3,7 +3,7 @@
 **Enhancements**
 
 - issue #11 multiple notifications with the same variable
-
+- ads out, ads in: override intern config with msg.config
 
 **Fixes**
 
