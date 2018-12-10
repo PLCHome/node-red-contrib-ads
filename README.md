@@ -9,7 +9,7 @@ Uses the NODE-ADS library for Node.JS (https://www.npmjs.com/package/node-ads).
 
 It's tested with TwinCat 2 but its also works with TwinCat 3. Look at the Port.
 
-For the latest updates see the [CHANGELOG.md](https://github.com/ChrisHanuta/node-red-contrib-ads/blob/master/CHANGELOG.md)
+For the latest updates see the [CHANGELOG.md](https://github.com/PLCHome/node-red-contrib-ads/blob/master/CHANGELOG.md)
 
 ## Installation
 

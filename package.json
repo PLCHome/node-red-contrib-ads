@@ -8,12 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ChrisHanuta/node-red-contrib-ads.git"
+    "url": "https://github.com/PLCHome/node-red-contrib-ads.git"
   },
   "bugs": {
-    "url": "https://github.com/ChrisHanuta/node-red-contrib-ads/issues"
+    "url": "https://github.com/PLCHome/node-red-contrib-ads/issues"
   },
-  "homepage": "https://github.com/ChrisHanuta/node-red-contrib-ads#readme",
+  "homepage": "https://github.com/PLCHome/node-red-contrib-ads#readme",
   "keywords": [
     "node-red",
     "ads",

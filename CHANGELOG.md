@@ -53,7 +53,7 @@
 **Fixes**
 
 - ADS ads-symbols on TC3
-- [Node.js under heavy load when connection down #6](https://github.com/ChrisHanuta/node-red-contrib-ads/issues/6)
+- [Node.js under heavy load when connection down #6](https://github.com/PLCHome/node-red-contrib-ads/issues/6)
 - node-ads-api 1.4.7: Notification result may be empty when the connection is closed
 
 
