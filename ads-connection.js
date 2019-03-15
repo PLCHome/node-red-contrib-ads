@@ -18,6 +18,8 @@ module.exports = function (RED) {
     adsHelpers.checkPort(node,node.port,801)
     node.amsPortTarget = parseInt(config.amsPortTarget)
     adsHelpers.checkPort(node,node.port,32905)
+    node.adsTimeout = parseInt(config.adsTimeout||500)
+    if (node.adsTimeout < 500) node.adsTimeout = 500
     debug('config:',node)
 
     node.system = {}
@@ -44,7 +46,8 @@ module.exports = function (RED) {
         "amsNetIdSource": node.amsNetIdSource,
         "port": node.port,
         "amsPortSource": node.amsPortSource,
-        "amsPortTarget": node.amsPortTarget
+        "amsPortTarget": node.amsPortTarget,
+        "timeout": node.adsTimeout
       }
       startTimer(45000)
       debug('connect:',adsoptions)

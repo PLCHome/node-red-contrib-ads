@@ -21,7 +21,7 @@ module.exports = function (RED) {
           topic: (config.topic||'')
         }
 
-        if (msg.config) {
+        if (typeof msg.config  !== 'undefined') {
           if (typeof msg.config.varName !== 'undefined') {
             cfg.symname = msg.config.varName
           }

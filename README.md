@@ -74,6 +74,7 @@ Source NetId: ADS NET ID for node red in the format 192.168.2.10.1.1 the same as
 Port: Normally 48898 for TwinCat 2/3
 Source Port: Normally 801 for TwinCat 2 Runtime 1 or 851 for TwinCat 3 Runtime 1
 Target Port: Normally 32905 for TwinCat 2/3
+Timeout ms: The timeout in milliseconds, by default 500
 ```
 
 #### - ADS System

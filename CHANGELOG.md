@@ -1,3 +1,33 @@
+### 1.1.20: Maintenance Release
+
+**Enhancements**
+
+- ads-connection: adjustable timeout
+
+**Fixes**
+
+- node-ads-api: version 1.4.13 used
+- ads-out: check for undefined
+
+### 1.1.19: Maintenance Release
+
+**Fixes**
+
+- node-ads-api: version 1.4.11 used
+
+### 1.1.18: Maintenance Release
+
+**Fixes**
+
+- node-ads-api: version 1.4.10 used
+
+### 1.1.17: Maintenance Release
+
+**Fixes**
+
+- node-ads-api: version 1.4.9 used
+
+
 ### 1.1.16: Maintenance Release
 
 **Fixes**

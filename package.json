@@ -4,7 +4,7 @@
   "description": "Provides nodes to talk to Beckhoff TwinCAT PLC variables over ADS",
   "license": "MIT",
   "dependencies": {
-    "node-ads-api": "^1.4.11"
+    "node-ads-api": "^1.4.13"
   },
   "repository": {
     "type": "git",

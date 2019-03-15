@@ -23,6 +23,10 @@
         <label for="node-config-input-amsPortSource"><i class="fa fa-sign-in"></i> <span data-i18n="ads-connection.label.amsPortSource"></span></label>
         <input type="number" id="node-config-input-amsPortSource" data-i18n="[placeholder]ads-connection.placeholder.amsPortSource">
     </div> 
+    <div class="form-row">
+        <label for="node-config-input-adsTimeout"><i class="fa fa-times-circle"></i> <span data-i18n="ads-connection.label.adsTimeout"></span></label>
+        <input type="number" id="node-config-input-adsTimeout" data-i18n="[placeholder]ads-connection.placeholder.adsTimeout">
+    </div> 
 </script>
 
 <script type="text/javascript">
@@ -73,12 +77,20 @@
                 value: 801,
                 required: true,  
                 validate:RED.validators.number()
+            },
+            adsTimeout: {
+                value: 500,
+                required: true,  
+                validate:RED.validators.number()
             }
         },
         label: function() {
             return this.amsNetIdSource+":"+this.amsNetIdTarget;
         },
         oneditprepare: function() {
+          if (this.adsTimeout === undefined) {
+            $("#node-config-input-adsTimeout").val("500");
+          }         
         } 
     });
 </script>
