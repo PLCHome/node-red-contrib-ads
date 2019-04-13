@@ -1,3 +1,9 @@
+### 1.1.21: Maintenance Release
+
+**Fixes**
+
+- ADS notification not working after PLC has been offline (same as #14) #18
+
 ### 1.1.20: Maintenance Release
 
 **Enhancements**

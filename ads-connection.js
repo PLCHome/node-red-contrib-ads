@@ -32,6 +32,7 @@ module.exports = function (RED) {
 
     function removeClient(){
       debug('removeClient:','Client:',!(!node.adsClient),'symbolsCache:',!(!node.symbolsCache),'datatypsCache:',!(!node.datatypsCache))
+      node.notificationSubscribed = {}
       delete(node.adsClient)
       delete(node.symbolsCache)
       delete(node.datatypsCache)
@@ -236,6 +237,7 @@ module.exports = function (RED) {
         }
       } else {
         var index = node.notificationSubscribed[n.symname].push(n)
+        debug('internalSubscribe: reuse notifyHandle',node.notificationSubscribed[n.symname][0].notifyHandle)
         if (node.notificationSubscribed[n.symname][0].notifyHandle) {
           node.notificationSubscribed[n.symname].map((n)=>{
             if (!n.notifyHandle) {
