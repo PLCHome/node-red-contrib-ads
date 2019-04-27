@@ -1,3 +1,9 @@
+### 1.1.22: Maintenance Release
+
+**Fixes**
+
+- String output: The "size" argument must be of type number. Received type string #19
+
 ### 1.1.21: Maintenance Release
 
 **Fixes**
