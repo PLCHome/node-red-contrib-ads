@@ -11,6 +11,24 @@ It's tested with TwinCat 2 but its also works with TwinCat 3. Look at the Port.
 
 For the latest updates see the [CHANGELOG.md](https://github.com/PLCHome/node-red-contrib-ads/blob/master/CHANGELOG.md)
 
+## issue
+
+If you have problems do not be afraid to open an issue.
+
+If you open a new issue please remember that I do not know your hardware, software, PLC and programming.
+
+Therefore it would be nice if you answer the following questions:
+
+```
+node-red-contrib-ads version:
+nodered version:
+on which operating system is the Node-RED running:
+on which hardware system is the Nodered running: (PC/Raspberry)
+PLC type:
+Twincat version of the PLC:
+Twincat version of the development environment:
+```
+
 ## Installation
 
 ```sh
