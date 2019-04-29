@@ -3,6 +3,7 @@
 **Enhancements**
 
 - something about issue
+- read/write/notification: on error debug points to the correct node and varame in debug message
 
 ### 1.1.22: Maintenance Release
 

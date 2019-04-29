@@ -227,7 +227,7 @@ module.exports = function (RED) {
           node.notificationSubscribed[n.symname].push(n)
           node.adsClient.notify(handle, function(err){
             if (err){
-              node.error(util.format('Ads Register Notification %s', err))
+              n.error(util.format("Ads Register Notification '%s' %s",n.symname, err))
             } else {
               node.notificationSubscribed[n.symname].map((no)=>{
                 no.notifyHandle = handle.notifyHandle
@@ -314,7 +314,7 @@ module.exports = function (RED) {
           node.adsClient.write(handle,
             function (err){
               if (err) {
-                node.error(util.format('Ads write %s', err))
+                n.error(util.format("Ads write '%s' %s", config.symname,err))
               }
             } )
         }
@@ -346,7 +346,7 @@ module.exports = function (RED) {
           debug('read:',handle)
           node.adsClient.read(handle, function(err, handle){
             if (err) {
-              node.error(util.format('Ads read %s', err))
+              n.error(util.format("Ads read '%s' %s",config.symname, err))
             } else {
               cb(handle)
             }
