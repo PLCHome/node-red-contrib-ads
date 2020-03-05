@@ -27,7 +27,7 @@ exports.checkPort = function (node,port,def) {
 const connectState = {
   ERROR:                     -1,
   DISCONNECTED:               0,
-  CONNECTIG:                  1,
+  CONNECTING:                 1,
   CONNECTED:                  2,
   DISCONNECTING:              3,
   fromId: function(id) {

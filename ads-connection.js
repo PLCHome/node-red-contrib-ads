@@ -40,7 +40,7 @@ module.exports = function (RED) {
     
     /* connect to PLC */
     function connect() {
-      internalSetConnectState(adsHelpers.connectState.CONNECTIG)
+      internalSetConnectState(adsHelpers.connectState.CONNECTING)
       var adsoptions = {
         "host": node.host,
         "amsNetIdTarget": node.amsNetIdTarget,
@@ -122,7 +122,7 @@ module.exports = function (RED) {
           debug('onerror:',error)
           if (error){
             node.error(util.format('Error ADS: %s', error))
-            if (node.system.connectState == adsHelpers.connectState.CONNECTIG) {
+            if (node.system.connectState == adsHelpers.connectState.CONNECTING) {
               internalSetConnectState(adsHelpers.connectState.ERROR)
             }
             removeClient()
@@ -501,7 +501,7 @@ module.exports = function (RED) {
         case adsHelpers.connectState.DISCONNECTED:
           fillSystem = "grey"
           break
-        case adsHelpers.connectState.CONNECTIG:
+        case adsHelpers.connectState.CONNECTING:
         case adsHelpers.connectState.DISCONNECTING:
           fillSystem = "yellow"
           break
