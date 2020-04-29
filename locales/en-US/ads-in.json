@@ -4,7 +4,10 @@
           "datasource": "Datasource",
           "varName": "variable name",
           "varTyp": "variable type",
+          "isArray": "array of",
           "varSize": "size in byte",
+          "varLowIndex": "low index",
+          "varHighIndex": "high index",
           "timezone": "timezone",
           "inValue": "property",
           "useInputMsg": "add property to incoming msg",
@@ -13,6 +16,8 @@
       "placeholder": {
           "varName": ".var",
           "varSize": "bytes",
+          "varLowIndex": "0",
+          "varHighIndex": "n",
           "inValue": "payload",
           "topic": "enter a topic"
       },
@@ -38,7 +43,8 @@
         "DATE_AND_TIME": "DATE_AND_TIME",
         "DT": "DT",
         "STRING": "STRING",
-        "RAW": "RAW"
+        "RAW": "RAW",
+        "ARRAY": "ARRAY"
       },
       "timezone": {
         "UNCHANGED": "unchanged",

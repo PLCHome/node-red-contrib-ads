@@ -25,6 +25,9 @@ module.exports = function (RED) {
          symname: config.varName,
          adstype: config.varTyp,
          bytelength: config.varSize,
+         array:config.isArray,
+         lowindex:config.varLowIndex,
+         highindex:config.varHighIndex,
          timezone: config.timezone,
          inValue: (config.inValue||'payload'),
          useInputMsg: (config.useInputMsg||false),
@@ -40,6 +43,15 @@ module.exports = function (RED) {
           }
           if (typeof msg.config.varSize !== 'undefined') {
             cfg.bytelength = msg.config.varSize
+          }
+          if (typeof msg.config.isarray !== 'undefined') {
+            cfg.array = msg.config.isarray
+          }
+          if (typeof msg.config.varLowIndex !== 'undefined') {
+            cfg.lowindex = msg.config.varLowIndex
+          }
+          if (typeof msg.config.varHighIndex !== 'undefined') {
+            cfg.highindex = msg.config.varHighIndex
           }
           if (typeof msg.config.timezone !== 'undefined') {
             cfg.timezone = msg.config.timezone

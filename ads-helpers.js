@@ -17,6 +17,10 @@ exports.isStringType = function (adsType) {
   return (adsType === "STRING")
 }
 
+exports.isArrayType = function (adsType) {
+  return (adsType === "ARRAY")
+}
+
 exports.checkPort = function (node,port,def) {
   if (port < 0x0000 || port > 0xFFFF) {
     port = def

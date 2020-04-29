@@ -40,7 +40,7 @@ module.exports = function (RED) {
     
     /* connect to PLC */
     function connect() {
-      internalSetConnectState(adsHelpers.connectState.CONNECTING)
+      internalSetConnectState(adsHelpers.connectState.CONNECTIG)
       var adsoptions = {
         "host": node.host,
         "amsNetIdTarget": node.amsNetIdTarget,
@@ -122,7 +122,7 @@ module.exports = function (RED) {
           debug('onerror:',error)
           if (error){
             node.error(util.format('Error ADS: %s', error))
-            if (node.system.connectState == adsHelpers.connectState.CONNECTING) {
+            if (node.system.connectState == adsHelpers.connectState.CONNECTIG) {
               internalSetConnectState(adsHelpers.connectState.ERROR)
             }
             removeClient()
@@ -227,7 +227,7 @@ module.exports = function (RED) {
           node.notificationSubscribed[n.symname].push(n)
           node.adsClient.notify(handle, function(err){
             if (err){
-              n.error(util.format("Ads Register Notification '%s' %s",n.symname, err))
+              node.error(util.format('Ads Register Notification %s', err))
             } else {
               node.notificationSubscribed[n.symname].map((no)=>{
                 no.notifyHandle = handle.notifyHandle
@@ -314,7 +314,7 @@ module.exports = function (RED) {
           node.adsClient.write(handle,
             function (err){
               if (err) {
-                n.error(util.format("Ads write '%s' %s", config.symname,err))
+                node.error(util.format('Ads write %s', err))
               }
             } )
         }
@@ -333,10 +333,18 @@ module.exports = function (RED) {
         if (adsHelpers.isRawType(config.adstype)) {
           handle.bytelength = parseInt(config.bytelength)
         } else {
-          if (adsHelpers.isStringType(config.adstype) && config.bytelength) {
-            handle.bytelength = nodeads.string(parseInt(config.bytelength))
+          if (config.array) {
+            if (adsHelpers.isStringType(config.adstype) && config.bytelength) {
+              handle.bytelength = nodeads.array(nodeads.string(parseInt(config.bytelength)),parseInt(config.lowindex),parseInt(config.highindex))
+            } else {
+              handle.bytelength = nodeads.array(nodeads[config.adstype],parseInt(config.lowindex),parseInt(config.highindex))
+            } 
           } else {
-            handle.bytelength = nodeads[config.adstype]
+            if (adsHelpers.isStringType(config.adstype) && config.bytelength) {
+              handle.bytelength = nodeads.string(parseInt(config.bytelength))
+            } else {
+              handle.bytelength = nodeads[config.adstype]
+            }
           }
         }
         if (adsHelpers.isTimezoneType(config.adstype)) {
@@ -346,7 +354,7 @@ module.exports = function (RED) {
           debug('read:',handle)
           node.adsClient.read(handle, function(err, handle){
             if (err) {
-              n.error(util.format("Ads read '%s' %s",config.symname, err))
+              node.error(util.format('Ads read %s', err))
             } else {
               cb(handle)
             }
@@ -501,7 +509,7 @@ module.exports = function (RED) {
         case adsHelpers.connectState.DISCONNECTED:
           fillSystem = "grey"
           break
-        case adsHelpers.connectState.CONNECTING:
+        case adsHelpers.connectState.CONNECTIG:
         case adsHelpers.connectState.DISCONNECTING:
           fillSystem = "yellow"
           break
