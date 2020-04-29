@@ -40,7 +40,7 @@ module.exports = function (RED) {
     
     /* connect to PLC */
     function connect() {
-      internalSetConnectState(adsHelpers.connectState.CONNECTIG)
+      internalSetConnectState(adsHelpers.connectState.CONNECTING)
       var adsoptions = {
         "host": node.host,
         "amsNetIdTarget": node.amsNetIdTarget,
@@ -122,7 +122,7 @@ module.exports = function (RED) {
           debug('onerror:',error)
           if (error){
             node.error(util.format('Error ADS: %s', error))
-            if (node.system.connectState == adsHelpers.connectState.CONNECTIG) {
+            if (node.system.connectState == adsHelpers.connectState.CONNECTING) {
               internalSetConnectState(adsHelpers.connectState.ERROR)
             }
             removeClient()
@@ -227,7 +227,7 @@ module.exports = function (RED) {
           node.notificationSubscribed[n.symname].push(n)
           node.adsClient.notify(handle, function(err){
             if (err){
-              node.error(util.format('Ads Register Notification %s', err))
+              n.error(util.format("Ads Register Notification '%s' %s",n.symname, err))
             } else {
               node.notificationSubscribed[n.symname].map((no)=>{
                 no.notifyHandle = handle.notifyHandle
@@ -314,7 +314,7 @@ module.exports = function (RED) {
           node.adsClient.write(handle,
             function (err){
               if (err) {
-                node.error(util.format('Ads write %s', err))
+                n.error(util.format("Ads write '%s' %s", config.symname,err))
               }
             } )
         }
@@ -354,7 +354,7 @@ module.exports = function (RED) {
           debug('read:',handle)
           node.adsClient.read(handle, function(err, handle){
             if (err) {
-              node.error(util.format('Ads read %s', err))
+              n.error(util.format("Ads read '%s' %s",config.symname, err))
             } else {
               cb(handle)
             }
@@ -509,7 +509,7 @@ module.exports = function (RED) {
         case adsHelpers.connectState.DISCONNECTED:
           fillSystem = "grey"
           break
-        case adsHelpers.connectState.CONNECTIG:
+          case adsHelpers.connectState.CONNECTING:
         case adsHelpers.connectState.DISCONNECTING:
           fillSystem = "yellow"
           break
