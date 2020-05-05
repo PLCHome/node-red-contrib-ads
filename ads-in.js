@@ -31,9 +31,14 @@ module.exports = function (RED) {
          timezone: config.timezone,
          inValue: (config.inValue||'payload'),
          useInputMsg: (config.useInputMsg||false),
-         topic: (config.topic||'')
+         //set topic by default to msg.topic
+         topic: (msg.topic||'')
         }
-
+        // overwrite default msg.topic by value in topic property (if used) 
+        if (config.topic.length > 0) {
+          cfg.topic = config.topic
+        }
+        
         if (msg.config) {
           if (typeof msg.config.varName !== 'undefined') {
             cfg.symname = msg.config.varName
@@ -62,8 +67,11 @@ module.exports = function (RED) {
           if (typeof msg.config.useInputMsg !== 'undefined') {
             cfg.useInputMsg = msg.config.useInputMsg
           }
+          // overwrite default msg.topic by value in msg.config.topic (if existing)
           if (typeof msg.config.topic !== 'undefined') {
-            cfg.topic = msg.config.topic||''
+            if (msg.config.topic.length > 0) {
+              cfg.topic = msg.config.topic
+            } 
           }
         }
 
