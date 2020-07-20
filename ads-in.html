@@ -5,6 +5,7 @@
     <li>config.varName: (string) override the variable name</li>
     <li>config.varType: (string) override the variable type</li>
     <li>config.varSize: (integer) the length on RAW and STRING type</li>
+    <li>config.isarray: (bool) is an ARRAY type, varLowIndex and varHighIndex must set</li>
     <li>config.varLowIndex: (integer) the Low index on ARRAY type</li>
     <li>config.varHighIndex: (integer) the High index on ARRAY type</li>
     <li>config.timezone: (string) only on date and time type 'TO_LOCAL' or 'UNCHANGED'</li>
@@ -50,7 +51,7 @@
         </select>
         <span id="node-row-isArray" style="display: inline-block; width: auto; vertical-align: center;" >
             <input type="checkbox" id="node-input-isArray" style="display: inline-block; width: auto; vertical-align: text-bottom;" autocomplete="off">
-            <label for="node-input-isArray">Array</label>
+            <label for="node-input-isArray"><span data-i18n="ads-in.label.isArray"></span></label>
         </span>
     </div>
     <div class="form-row" id="node-row-varSize">

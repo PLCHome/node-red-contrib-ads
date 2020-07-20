@@ -4,7 +4,7 @@
           "datasource": "Datasource",
           "varName": "variable name",
           "varTyp": "variable type",
-          "isArray": "array of",
+          "isArray": "array",
           "varSize": "size in byte",
           "varLowIndex": "low index",
           "varHighIndex": "high index",
