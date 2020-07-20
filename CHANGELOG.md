@@ -2,7 +2,10 @@
 
 **Enhancements**
 - add read arrays on in node and notification node
+- enter the client's IP address if there is more than one
 
+**Fixes**
+- some trouble on data error and end the socket
 
 ### 1.1.23: Maintenance Release
 

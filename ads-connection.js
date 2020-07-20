@@ -9,18 +9,7 @@ module.exports = function (RED) {
   function adsConnectionNode(config) {
     RED.nodes.createNode(this, config)
     var node = this
-    node.host = config.host
-    node.amsNetIdTarget = config.amsNetIdTarget
-    node.amsNetIdSource = config.amsNetIdSource
-    node.port = parseInt(config.port)
-    adsHelpers.checkPort(node,node.port,48898)
-    node.amsPortSource = parseInt(config.amsPortSource)
-    adsHelpers.checkPort(node,node.port,801)
-    node.amsPortTarget = parseInt(config.amsPortTarget)
-    adsHelpers.checkPort(node,node.port,32905)
-    node.adsTimeout = parseInt(config.adsTimeout||500)
-    if (node.adsTimeout < 500) node.adsTimeout = 500
-    debug('config:',node)
+    debug('config:',config)
 
     node.system = {}
     internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
@@ -32,25 +21,34 @@ module.exports = function (RED) {
 
     function removeClient(){
       debug('removeClient:','Client:',!(!node.adsClient),'symbolsCache:',!(!node.symbolsCache),'datatypsCache:',!(!node.datatypsCache))
-      node.notificationSubscribed = {}
-      delete(node.adsClient)
-      delete(node.symbolsCache)
-      delete(node.datatypsCache)
+      internalRestart(function () {
+        node.notificationSubscribed = {}
+        delete(node.adsClient)
+        delete(node.symbolsCache)
+        delete(node.datatypsCache)
+      })
     }
     
     /* connect to PLC */
     function connect() {
       internalSetConnectState(adsHelpers.connectState.CONNECTING)
-      var adsoptions = {
-        "host": node.host,
-        "amsNetIdTarget": node.amsNetIdTarget,
-        "amsNetIdSource": node.amsNetIdSource,
-        "port": node.port,
-        "amsPortSource": node.amsPortSource,
-        "amsPortTarget": node.amsPortTarget,
-        "timeout": node.adsTimeout
-      }
       startTimer(45000)
+      var adsoptions = {}
+
+      adsoptions.host = config.host
+      if (config.clientIP !== "") {
+        adsoptions.localAddress = config.clientIP
+      }
+      adsoptions.amsNetIdTarget = config.amsNetIdTarget
+      adsoptions.amsNetIdSource = config.amsNetIdSource
+      adsoptions.port = parseInt(config.port)
+      adsHelpers.checkPort(node,adsoptions.port,48898)
+      adsoptions.amsPortSource = parseInt(config.amsPortSource)
+      adsHelpers.checkPort(node,adsoptions.amsPortSource,801)
+      adsoptions.amsPortTarget = parseInt(config.amsPortTarget)
+      adsHelpers.checkPort(node,adsoptions.amsPortTarget,32905)
+      adsoptions.timeout = parseInt(config.adsTimeout||500)
+      if (adsoptions.timeout < 500) adsoptions.timeout = 500
       debug('connect:',adsoptions)
       removeClient()
       node.adsClient = nodeads.connect(adsoptions,
@@ -415,7 +413,7 @@ module.exports = function (RED) {
         internalSystemUpdate()
       }
     }
-    /* end write to PLC */
+    /* end Note State */
 
     /* symbols from PLC */
     node.getSymbols = function (force,cb) {
@@ -517,7 +515,7 @@ module.exports = function (RED) {
         case adsHelpers.connectState.DISCONNECTED:
           fillSystem = "grey"
           break
-          case adsHelpers.connectState.CONNECTING:
+        case adsHelpers.connectState.CONNECTING:
         case adsHelpers.connectState.DISCONNECTING:
           fillSystem = "yellow"
           break

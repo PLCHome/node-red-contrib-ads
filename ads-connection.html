@@ -4,6 +4,10 @@
         <input type="text" id="node-config-input-host" data-i18n="[placeholder]ads-connection.placeholder.host">
     </div>
     <div class="form-row">
+        <label for="node-config-input-clientIP"><i class="fa fa-globe"></i> <span data-i18n="ads-connection.label.clientIP"></span></label>
+        <input type="text" id="node-config-input-clientIP" data-i18n="[placeholder]ads-connection.placeholder.clientIP">
+    </div>
+    <div class="form-row">
         <label for="node-config-input-amsNetIdTarget"><i class="fa fa-globe"></i> <span data-i18n="ads-connection.label.amsNetIdTarget"></span></label>
         <input type="text" id="node-config-input-amsNetIdTarget" data-i18n="[placeholder]ads-connection.placeholder.amsNetIdTarget">
     </div>
@@ -48,6 +52,18 @@
                                          if (ok) {
                                            if ($("#node-config-input-amsNetIdTarget").val() == '') {
                                              $("#node-config-input-amsNetIdTarget").val(val+'.1.1')
+                                           }
+                                         }
+                                         return ok;
+                                       }
+            },
+            clientIP: {
+                value: '',
+                required: false,
+                validate: function(val){ var ok = (val=="")||checkIP(val,4);
+                                         if (ok) {
+                                           if ($("#node-config-input-amsNetIdSource").val() == '') {
+                                             $("#node-config-input-amsNetIdSource").val(val+'.1.1')
                                            }
                                          }
                                          return ok;

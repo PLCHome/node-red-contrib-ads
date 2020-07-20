@@ -2,6 +2,7 @@
   "ads-connection": {
       "label": {
           "host": "Host",
+          "clientIP": "Client",
           "amsNetIdTarget": "Target NetId",
           "amsNetIdSource": "Source NetId",
           "port": "Port",
@@ -11,6 +12,7 @@
       },
       "placeholder": {
           "host": "for example: 192.168.2.5",
+          "clientIP": "leave empty for automatic",
           "amsNetIdTarget": "for example: 192.168.2.5.1.1",
           "amsNetIdSource": "for example: 192.168.2.10.1.1",
           "port": "for example: 48898",

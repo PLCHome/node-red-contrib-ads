@@ -87,6 +87,7 @@ Be sure to create one for an PLC.
 
 ```
 Host: IP address of the PLC
+Client: IP address of the client if there is more than one. If it is empty, it will be determined automatically.
 Target NetId: ADS NET ID of the PLC in the format 192.168.2.5.1.1
 Source NetId: ADS NET ID for node red in the format 192.168.2.10.1.1 the same as the one added to the static route in the Beckhoff PLC.
 Port: Normally 48898 for TwinCat 2/3
