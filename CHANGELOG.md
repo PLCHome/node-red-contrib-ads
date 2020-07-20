@@ -1,8 +1,8 @@
 ### 1.1.24: Maintenance Release
 
 **Enhancements**
-
 - add read arrays on in node and notification node
+
 
 ### 1.1.23: Maintenance Release
 
