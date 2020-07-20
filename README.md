@@ -181,6 +181,8 @@ There is an possible to override the node configuration. You can add an property
 
 Twincat ADS input node that can recive values from the PLC.
 
+This note is not for the transmission of cyclic data. Do not use it in conjunction with a timer. There is a notification node for this.
+
 Enter the name of the variable, the type and the property name for the output.
 You can still decide whether a new output with the property for the value will be created or the property will be inserted into the inputvalue and output at the output.
 
@@ -188,6 +190,9 @@ There is an possible to override the node configuration. You can add an property
 - `config.varName`: (string) override the variable name
 - `config.varType`: (string) override the variable type
 - `config.varSize`: (integer) the length on RAW and STRING type
+- `config.isarray`: (bool) is an ARRAY type, varLowIndex and varHighIndex must set
+- `config.varLowIndex`: (integer) the Low index on ARRAY type
+- `config.varHighIndex`: (integer) the High index on ARRAY type
 - `config.timezone`: (string) only on date and time type 'TO_LOCAL' or 'UNCHANGED'
 - `config.inProperty`: (string) the property for the outvalue
 - `config.useInputMsg`: (bool) the input message will be used to build the out message or an new message will be build.

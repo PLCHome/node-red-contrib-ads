@@ -211,10 +211,18 @@ module.exports = function (RED) {
       if (adsHelpers.isRawType(n.adstype)) {
         handle.bytelength = parseInt(n.bytelength)
       } else {
-        if (adsHelpers.isStringType(n.adstype) && n.bytelength) {
-          handle.bytelength = nodeads.string(parseInt(n.bytelength))
+        if (n.array) {
+          if (adsHelpers.isStringType(n.adstype) && n.bytelength) {
+            handle.bytelength = nodeads.array(nodeads.string(parseInt(n.bytelength)),parseInt(n.lowindex),parseInt(n.highindex))
+          } else {
+            handle.bytelength = nodeads.array(nodeads[n.adstype],parseInt(n.lowindex),parseInt(n.highindex))
+          } 
         } else {
-          handle.bytelength = nodeads[n.adstype]
+          if (adsHelpers.isStringType(n.adstype) && n.bytelength) {
+            handle.bytelength = nodeads.string(parseInt(n.bytelength))
+          } else {
+            handle.bytelength = nodeads[n.adstype]
+          }
         }
       }
       if (adsHelpers.isTimezoneType(n.adstype)) {

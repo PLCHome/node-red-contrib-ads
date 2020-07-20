@@ -43,8 +43,7 @@
         "DATE_AND_TIME": "DATE_AND_TIME",
         "DT": "DT",
         "STRING": "STRING",
-        "RAW": "RAW",
-        "ARRAY": "ARRAY"
+        "RAW": "RAW"
       },
       "timezone": {
         "UNCHANGED": "unchanged",

@@ -1,5 +1,6 @@
 <script type="text/x-red" data-help-name="ADS In">
     <p>Node to provide data from Beckhoff TwinCAT ADS</p>
+	<p><b>This note is not for the transmission of cyclic data. Do not use it in conjunction with a timer. There is a notification node for this.</b></p>
     <p>The data are fetched from the PLC when an object is transferred to the input. The entry data will be ignored.</p>
     <p>There is an possible to override the node configuration. You can add an property config to the message object. Not all configuration properties need to be overridden.</p>
     <li>config.varName: (string) override the variable name</li>
