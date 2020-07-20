@@ -5,6 +5,8 @@
     <li>config.varName: (string) override the variable name</li>
     <li>config.varType: (string) override the variable type</li>
     <li>config.varSize: (integer) the length on RAW and STRING type</li>
+    <li>config.varLowIndex: (integer) the Low index on ARRAY type</li>
+    <li>config.varHighIndex: (integer) the High index on ARRAY type</li>
     <li>config.timezone: (string) only on date and time type 'TO_LOCAL' or 'UNCHANGED'</li>
     <li>config.inProperty`: (string) the property for the outvalue</li>
     <li>config.useInputMsg`: (bool) the input message will be used to build the out message or an new message will be build.</li>
@@ -46,10 +48,20 @@
             <option value="STRING" data-i18n="ads-in.varTyp.STRING"></option>
             <option value="RAW" data-i18n="ads-in.varTyp.RAW"></option>
         </select>
+        <span id="node-row-isArray" style="display: inline-block; width: auto; vertical-align: center;" >
+            <input type="checkbox" id="node-input-isArray" style="display: inline-block; width: auto; vertical-align: text-bottom;" autocomplete="off">
+            <label for="node-input-isArray">Array</label>
+        </span>
     </div>
     <div class="form-row" id="node-row-varSize">
         <label for="node-input-varSize"><i class="fa fa-arrows-h"></i> <span data-i18n="ads-in.label.varSize"></span></label>
         <input type="number" id="node-input-varSize" data-i18n="[placeholder]ads-in.placeholder.varSize">
+    </div>
+    <div class="form-row" id="node-row-varIndex">
+        <label for="node-input-varLowIndex"><i class="fa fa-caret-down"></i> <span data-i18n="ads-in.label.varLowIndex"></span></label>
+        <input type="text" id="node-input-varLowIndex" data-i18n="[placeholder]ads-in.placeholder.varLowIndex" maxlength="6" size="6" style="width: 58px;">
+        <label for="node-input-varHighIndex" style="width:90px;"><i class="fa fa-caret-up"></i> <span data-i18n="ads-in.label.varHighIndex"></span></label>
+        <input type="text" id="node-input-varHighIndex" data-i18n="[placeholder]ads-in.placeholder.varHighIndex" maxlength="6" size="6" style="width: 58px;">
     </div>
     <div class="form-row" id="node-row-timezone">
         <label for="node-input-timezone"><i class="fa fa-plane"></i> <span data-i18n="ads-in.label.timezone"></span></label>
@@ -105,7 +117,18 @@
                 value: "",
                 validate: function (val) {return ($("#node-input-varTyp").val()!== "RAW") || (RED.validators.number(val) && val>0)} 
             },
+            varLowIndex: {
+                value: "",
+                validate: function (val) {return ($("#node-input-varTyp").val()!== "ARRAY") || (RED.validators.number(val) && val>0)} 
+            },
+            varHighIndex: {
+                value: "",
+                validate: function (val) {return ($("#node-input-varTyp").val()!== "ARRAY") || (RED.validators.number(val) && val>0)} 
+            },
             useInputMsg: {
+                value: false
+            },
+            isArray: {
                 value: false
             },
             timezone: {
@@ -155,8 +178,28 @@
                   } else {
                       $("#node-row-timezone").hide();
                   }
+                  if (varType === "RAW" ) {
+                      $("#node-row-isArray").hide();
+                      $("#node-row-varIndex").hide();
+                      $("#node-row-varLowIndex").hide();
+                      $("#node-row-varHighIndex").hide();
+                  } else {
+                      $("#node-row-isArray").show();
+                  }
               /*    node.resize();*/
               }); 
+          $('#node-input-isArray[type="checkbox"]').change(function() {
+                  if (this.checked) {                    
+                      $("#node-row-varIndex").show();
+                      $("#node-row-varLowIndex").show();
+                      $("#node-row-varHighIndex").show();
+                  } else {
+                     $("#node-row-varIndex").hide();
+                     $("#node-row-varLowIndex").hide();
+                     $("#node-row-varHighIndex").hide();
+                  }
+              }); 
+
         }
     });
     

@@ -333,10 +333,18 @@ module.exports = function (RED) {
         if (adsHelpers.isRawType(config.adstype)) {
           handle.bytelength = parseInt(config.bytelength)
         } else {
-          if (adsHelpers.isStringType(config.adstype) && config.bytelength) {
-            handle.bytelength = nodeads.string(parseInt(config.bytelength))
+          if (config.array) {
+            if (adsHelpers.isStringType(config.adstype) && config.bytelength) {
+              handle.bytelength = nodeads.array(nodeads.string(parseInt(config.bytelength)),parseInt(config.lowindex),parseInt(config.highindex))
+            } else {
+              handle.bytelength = nodeads.array(nodeads[config.adstype],parseInt(config.lowindex),parseInt(config.highindex))
+            } 
           } else {
-            handle.bytelength = nodeads[config.adstype]
+            if (adsHelpers.isStringType(config.adstype) && config.bytelength) {
+              handle.bytelength = nodeads.string(parseInt(config.bytelength))
+            } else {
+              handle.bytelength = nodeads[config.adstype]
+            }
           }
         }
         if (adsHelpers.isTimezoneType(config.adstype)) {
@@ -501,7 +509,7 @@ module.exports = function (RED) {
         case adsHelpers.connectState.DISCONNECTED:
           fillSystem = "grey"
           break
-        case adsHelpers.connectState.CONNECTING:
+          case adsHelpers.connectState.CONNECTING:
         case adsHelpers.connectState.DISCONNECTING:
           fillSystem = "yellow"
           break

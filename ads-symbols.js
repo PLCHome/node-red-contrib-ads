@@ -12,28 +12,35 @@ module.exports = function (RED) {
     if (node.adsDatasource) {
       node.adscfg = {
         data: config.data,
-        force: config.force || false,
-        topic: config.topic ||''
+        force: config.force || false 
       }
-      node.adscfg.hasTopic = node.adscfg.topic.length > 0
       debug('config:',node)
 
 
-      node.onData = function (data){
+      node.onData = function (data,topic){
         debug('onData:','node.id',node.id,'node.type',node.type,'data',data)
         const msg = {
           payload: data
         }
-        if (node.adscfg.hasTopic) {
-          msg.topic = node.adscfg.topic
+        if (topic.length > 0) {
+          msg.topic = topic
         }
         node.send(msg)
       }
 
-      this.on("input", function(msg) {
-        
+      this.on("input", function(msg) {     
         debug('input:','node.id',node.id,'node.type',node.type,'data',msg)
         var call = node.adsDatasource.getDatatyps
+        
+        var topic = msg.topic
+        // overwrite default msg.topic by value in msg.config.topic (if existing)
+        if (typeof (msg.config && msg.config.topic) !== 'undefined' ) {
+          topic = msg.config.topic
+        // overwrite default msg.topic by value in topic property (if used) 
+        } else if (config.topic.length > 0 ){       
+          topic = config.topic
+        // else -> keep original msg.topic
+        }
         if (node.adscfg.data == 'SYMBOLES') {
           call = node.adsDatasource.getSymbols
         }
@@ -63,7 +70,7 @@ module.exports = function (RED) {
           } else {
             out = data
           }
-          node.onData(out)
+          node.onData(out,topic)
         })
 
       })
