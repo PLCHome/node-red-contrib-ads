@@ -6,6 +6,7 @@
 
 **Fixes**
 - some trouble on data error and end the socket
+- some trouble on restart after data error
 
 ### 1.1.23: Maintenance Release
 

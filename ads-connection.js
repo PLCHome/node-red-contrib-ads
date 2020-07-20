@@ -123,8 +123,7 @@ module.exports = function (RED) {
             if (node.system.connectState == adsHelpers.connectState.CONNECTING) {
               internalSetConnectState(adsHelpers.connectState.ERROR)
             }
-            removeClient()
-            startTimer(20000)
+            internalRestart(connect)
           }
         }
       )
