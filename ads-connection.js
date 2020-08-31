@@ -21,12 +21,10 @@ module.exports = function (RED) {
 
     function removeClient(){
       debug('removeClient:','Client:',!(!node.adsClient),'symbolsCache:',!(!node.symbolsCache),'datatypsCache:',!(!node.datatypsCache))
-      internalRestart(function () {
-        node.notificationSubscribed = {}
-        delete(node.adsClient)
-        delete(node.symbolsCache)
-        delete(node.datatypsCache)
-      })
+      node.notificationSubscribed = {}
+      delete(node.adsClient)
+      delete(node.symbolsCache)
+      delete(node.datatypsCache)
     }
     
     /* connect to PLC */
@@ -139,7 +137,7 @@ module.exports = function (RED) {
       clearTimeout(conncetTimer)
       if (node.system.connectState != adsHelpers.connectState.DISCONNECTING) {
         debugCyclic('startTimer:',time||10000)
-        conncetTimer = setInterval(function () {
+        conncetTimer = setTimeout(function () {
           debug('startTimer:','Timeout')
           if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
             internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
@@ -385,7 +383,7 @@ module.exports = function (RED) {
         node.adsClient.end(function (){
           internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
           removeClient()
-          var sleep = setInterval(function () {
+          var sleep = setTimeout(function () {
             clearTimeout(sleep)
             debug('internalRestart:','done')
             done()

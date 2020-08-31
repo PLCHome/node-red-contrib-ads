@@ -1,3 +1,8 @@
+### 1.1.25: Maintenance Release
+
+**Fixes**
+- some trouble on deploy
+
 ### 1.1.24: Maintenance Release
 
 **Enhancements**
