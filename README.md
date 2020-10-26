@@ -1,3 +1,8 @@
+##
+The component is not working properly.
+Since I don't feel like node-red and have no time, the project will be closed.
+
+
 # node-red-contrib-ads
 
 > A Node-RED implementation for the Twincat ADS protocol.
