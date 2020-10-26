@@ -1,6 +1,8 @@
 # The component is not working properly.
 # Since I don't feel like node-red and have no time, the project will be closed.
 
+# With the last few attempts to improve the component when applying, everything has only gotten worse.
+
 
 # node-red-contrib-ads
 
