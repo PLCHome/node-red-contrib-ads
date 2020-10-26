@@ -1,6 +1,5 @@
-##
-The component is not working properly.
-Since I don't feel like node-red and have no time, the project will be closed.
+# The component is not working properly.
+# Since I don't feel like node-red and have no time, the project will be closed.
 
 
 # node-red-contrib-ads
