@@ -95,8 +95,8 @@ Client: IP address of the client if there is more than one. If it is empty, it w
 Target NetId: ADS NET ID of the PLC in the format 192.168.2.5.1.1
 Source NetId: ADS NET ID for node red in the format 192.168.2.10.1.1 the same as the one added to the static route in the Beckhoff PLC.
 Port: Normally 48898 for TwinCat 2/3
-Source Port: Normally 801 for TwinCat 2 Runtime 1 or 851 for TwinCat 3 Runtime 1
-Target Port: Normally 32905 for TwinCat 2/3
+Target Port: Normally 801 for TwinCat 2 Runtime 1 or 851 for TwinCat 3 Runtime 1
+Source Port: Normally 32905 for TwinCat 2/3
 Timeout ms: The timeout in milliseconds, by default 500
 ```
 
