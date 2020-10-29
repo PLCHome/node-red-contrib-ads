@@ -1,8 +1,6 @@
-# The component is not working properly.
-# Since I don't feel like node-red and have no time, the project will be closed.
-
-# With the last few attempts to improve the component when applying, everything has only gotten worse.
-
+# This component has some problems if the network connection to the PLC is interrupted, the PLC is not running, incorrect data is stored for the PLC or there is a deployment in the node red.
+Everyone can take care of the problems, eliminate them and make a request.
+But let that cry in the issues.
 
 # node-red-contrib-ads
 

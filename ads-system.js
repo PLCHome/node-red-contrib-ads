@@ -10,7 +10,7 @@ module.exports = function (RED) {
     node.adsDatasource = RED.nodes.getNode(config.datasource)
     if (node.adsDatasource) {
       node.topic = config.topic||''
-      node.hasTopic = node.topic.length > 0
+      node.hasTopic = String(node.topic).length > 0
       debug('config:',node)
 
 

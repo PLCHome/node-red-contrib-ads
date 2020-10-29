@@ -1,3 +1,8 @@
+### 1.1.26: Maintenance Release
+
+**Fixes**
+- some string.length behavior in v14.13.1 symbols and types crashes
+
 ### 1.1.25: Maintenance Release
 
 **Fixes**

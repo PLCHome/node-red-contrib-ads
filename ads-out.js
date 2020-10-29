@@ -41,7 +41,7 @@ module.exports = function (RED) {
             cfg.topic = msg.config.topic||''
           }
         }
-        cfg.hasTopic = cfg.topic.length > 0
+        cfg.hasTopic = String(cfg.topic).length > 0
         debug('adsNotificationNode:','onAdsData:','node.id',node.id,'cfg',cfg)
         var value = RED.util.getMessageProperty(msg,(cfg.outValue||'payload'))
         if (value !== undefined && (!cfg.hasTopic || cfg.topic == msg.topic)) {

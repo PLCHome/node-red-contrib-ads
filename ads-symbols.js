@@ -22,7 +22,7 @@ module.exports = function (RED) {
         const msg = {
           payload: data
         }
-        if (topic.length > 0) {
+        if (String(topic).length > 0) {
           msg.topic = topic
         }
         node.send(msg)
@@ -34,10 +34,10 @@ module.exports = function (RED) {
         
         var topic = msg.topic
         // overwrite default msg.topic by value in msg.config.topic (if existing)
-        if (typeof (msg.config && msg.config.topic) !== 'undefined' ) {
+        if (typeof (msg.config) !== 'undefined' && typeof (msg.config.topic) !== 'undefined' ) {
           topic = msg.config.topic
         // overwrite default msg.topic by value in topic property (if used) 
-        } else if (config.topic.length > 0 ){       
+        } else if (String(config.topic).length > 0 ){       
           topic = config.topic
         // else -> keep original msg.topic
         }

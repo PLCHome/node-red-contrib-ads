@@ -21,7 +21,7 @@ module.exports = function (RED) {
       node.cycleTime = config.cycleTime
       node.property = config.property||'payload'
       node.topic = config.topic||''
-      node.hasTopic = node.topic.length > 0
+      node.hasTopic = String(node.topic).length > 0
       debug('config:',node)
 
       node.onAdsData = function (handle){

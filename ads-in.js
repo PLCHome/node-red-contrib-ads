@@ -35,7 +35,7 @@ module.exports = function (RED) {
          topic: (msg.topic||'')
         }
         // overwrite default msg.topic by value in topic property (if used) 
-        if (config.topic.length > 0) {
+        if (String(config.topic).length > 0) {
           cfg.topic = config.topic
         }
         
@@ -69,13 +69,13 @@ module.exports = function (RED) {
           }
           // overwrite default msg.topic by value in msg.config.topic (if existing)
           if (typeof msg.config.topic !== 'undefined') {
-            if (msg.config.topic.length > 0) {
+            if (String(msg.config.topic).length > 0) {
               cfg.topic = msg.config.topic
             } 
           }
         }
 
-        cfg.hasTopic = cfg.topic.length > 0
+        cfg.hasTopic = String(cfg.topic).length > 0
         var outMsg = {}
         if (cfg.useInputMsg) {
           outMsg = Object.assign({},msg)
