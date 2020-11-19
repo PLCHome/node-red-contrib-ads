@@ -1,10 +1,12 @@
+'use strict'
+var nodeads = require('node-ads-api')
+var adsHelpers = require('./ads-helpers')
+var util = require('util')
+var debug = require('debug')('node-red-contrib-ads:adsConnectionNode')
+var debugCyclic = require('debug')('node-red-contrib-ads:adsConnectionNode:Cyclic')
+var twincat={}
+
 module.exports = function (RED) {
-  'use strict'
-  var nodeads = require('node-ads-api')
-  var adsHelpers = require('./ads-helpers')
-  var util = require('util')
-  var debug = require('debug')('node-red-contrib-ads:adsConnectionNode')
-  var debugCyclic = require('debug')('node-red-contrib-ads:adsConnectionNode:Cyclic')
 
   function adsConnectionNode(config) {
     RED.nodes.createNode(this, config)
@@ -20,11 +22,11 @@ module.exports = function (RED) {
     node.systemNodes = []
 
     function removeClient(){
-      debug('removeClient:','Client:',!(!node.adsClient),'symbolsCache:',!(!node.symbolsCache),'datatypsCache:',!(!node.datatypsCache))
+      debug('removeClient:','Client:',!(!twincat.adsClient),'symbolsCache:',!(!twincat.symbolsCache),'datatypsCache:',!(!twincat.datatypsCache))
       node.notificationSubscribed = {}
-      delete(node.adsClient)
-      delete(node.symbolsCache)
-      delete(node.datatypsCache)
+      delete(twincat.adsClient)
+      delete(twincat.symbolsCache)
+      delete(twincat.datatypsCache)
     }
     
     /* connect to PLC */
@@ -48,41 +50,44 @@ module.exports = function (RED) {
       adsoptions.timeout = parseInt(config.adsTimeout||500)
       if (adsoptions.timeout < 500) adsoptions.timeout = 500
       debug('connect:',adsoptions)
-      removeClient()
-      node.adsClient = nodeads.connect(adsoptions,
-        function (){
-          node.adsClient.readDeviceInfo(function (err,handel) {
-            if (err) {
-              removeClient()
-              node.error('Error on connect: check target NetId or routing')
-              internalSetConnectState(adsHelpers.connectState.ERROR)
-              startTimer(20000)
-              debug('connect:','readDeviceInfo:',err)
-            } else {
-              debug('connect:','readDeviceInfo:',handel)
-              node.system.majorVersion = handel.majorVersion
-              node.system.minorVersion = handel.minorVersion
-              node.system.versionBuild = handel.versionBuild
-              node.system.version = handel.majorVersion+'.'+handel.minorVersion+'.'+handel.versionBuild
-              node.system.deviceName = handel.deviceName
-              internalSystemUpdate()
-              internalSubscribeLiveTick()
-              startTimer()
-              internalSubscribeSymTab()
-              node.notificationNodes.forEach(internalSubscribe)
-              internalSetConnectState(adsHelpers.connectState.CONNECTED)
-            }
-          })
-        }
-      )
+      if (twincat.adsClient) {
+        startTimer(5000)
+      } else {
+        twincat.adsClient = nodeads.connect(adsoptions,
+          function (){
+            twincat.adsClient.readDeviceInfo(function (err,handel) {
+              if (err) {
+                removeClient()
+                node.error('Error on connect: check target NetId or routing')
+                internalSetConnectState(adsHelpers.connectState.ERROR)
+                startTimer(20000)
+                debug('connect:','readDeviceInfo:',err)
+              } else {
+                debug('connect:','readDeviceInfo:',handel)
+                node.system.majorVersion = handel.majorVersion
+                node.system.minorVersion = handel.minorVersion
+                node.system.versionBuild = handel.versionBuild
+                node.system.version = handel.majorVersion+'.'+handel.minorVersion+'.'+handel.versionBuild
+                node.system.deviceName = handel.deviceName
+                internalSystemUpdate()
+                internalSubscribeLiveTick()
+                startTimer(10000)
+                internalSubscribeSymTab()
+                node.notificationNodes.forEach(internalSubscribe)
+                internalSetConnectState(adsHelpers.connectState.CONNECTED)
+              }
+            })
+          }
+        )
+      }
 
-      node.adsClient.on('notification', function (handle){
+      twincat.adsClient.on('notification', function (handle){
           if (handle.indexGroup == nodeads.ADSIGRP.DEVICE_DATA &&
               handle.indexOffset == nodeads.ADSIOFFS_DEVDATA.ADSSTATE) {
             debugCyclic('notification:','connectCheckADSSTATE:', handle.indexGroup, handle.indexGroup, 
                            'handle.indexOffset', handle.indexOffset, 'handle.value', handle.value)
             if (node.system.connectState == adsHelpers.connectState.CONNECTED) {     
-              startTimer()
+              startTimer(10000)
             }
             internalSetAdsState(handle.value)
           } else if (handle.indexGroup == nodeads.ADSIGRP.SYM_VERSION &&
@@ -114,14 +119,14 @@ module.exports = function (RED) {
       )
 
 
-      node.adsClient.on('error', function (error) {
+      twincat.adsClient.on('error', function (error) {
           debug('onerror:',error)
           if (error){
             node.error(util.format('Error ADS: %s', error))
             if (node.system.connectState == adsHelpers.connectState.CONNECTING) {
               internalSetConnectState(adsHelpers.connectState.ERROR)
             }
-            internalRestart(connect)
+            internalRestart(() => {startTimer(60000)})
           }
         }
       )
@@ -133,17 +138,18 @@ module.exports = function (RED) {
     var conncetTimer
 
     function startTimer(time){
+      const defTime = 60000
       debugCyclic('startTimer:','clearTimeout')
       clearTimeout(conncetTimer)
       if (node.system.connectState != adsHelpers.connectState.DISCONNECTING) {
-        debugCyclic('startTimer:',time||10000)
+        debugCyclic('startTimer:',time||defTime)
         conncetTimer = setTimeout(function () {
           debug('startTimer:','Timeout')
           if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
             internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
           }
           internalRestart(connect)
-        },time||10000)
+        },time||defTime)
       }
     }
     /* needs internalSubscribeLiveTick */
@@ -179,8 +185,8 @@ module.exports = function (RED) {
         var handle =  {
           notifyHandle: n.notifyHandle
         }
-        if (node.adsClient) {
-          node.adsClient.releaseNotificationHandle(handle, function() {
+        if (twincat.adsClient) {
+          twincat.adsClient.releaseNotificationHandle(handle, function() {
             delete(n.notifyHandle)
             debug('unsubscribe: done')
             if (cb){
@@ -224,11 +230,11 @@ module.exports = function (RED) {
         handle.useLocalTimezone = (n.timezone === "TO_LOCAL")
       }
       if (!(node.notificationSubscribed[n.symname])){
-        if (node.adsClient) {
+        if (twincat.adsClient) {
           debug('internalSubscribe:',handle)
           node.notificationSubscribed[n.symname]=[]
           node.notificationSubscribed[n.symname].push(n)
-          node.adsClient.notify(handle, function(err){
+          twincat.adsClient.notify(handle, function(err){
             if (err){
               n.error(util.format("Ads Register Notification '%s' %s",n.symname, err))
             } else {
@@ -260,9 +266,9 @@ module.exports = function (RED) {
         cycleTime: 1000,
         bytelength: nodeads.WORD
       }
-      if (node.adsClient) {
+      if (twincat.adsClient) {
         debug('internalSubscribeLiveTick:',handle)
-        node.adsClient.notify(handle, function(err){
+        twincat.adsClient.notify(handle, function(err){
           if (err){
             node.error(util.format('Ads Register Notification live tick %s', err))
           }
@@ -280,9 +286,9 @@ module.exports = function (RED) {
         start: true
       }
 
-      if (node.adsClient) {
+      if (twincat.adsClient) {
         debug('internalSubscribeSymTab:',handle)
-        node.adsClient.notify(handle, function(err){
+        twincat.adsClient.notify(handle, function(err){
           if (err){
             node.error(util.format('Ads Register Notification Sym Tab %s', err))
           }
@@ -312,9 +318,9 @@ module.exports = function (RED) {
         if (adsHelpers.isTimezoneType(config.adstype)) {
           handle.useLocalTimezone = (config.timezone === "TO_LOCAL")
         }
-        if (node.adsClient) {
+        if (twincat.adsClient) {
           debug('write:',handle)
-          node.adsClient.write(handle,
+          twincat.adsClient.write(handle,
             function (err){
               if (err) {
                 n.error(util.format("Ads write '%s' %s", config.symname,err))
@@ -353,9 +359,9 @@ module.exports = function (RED) {
         if (adsHelpers.isTimezoneType(config.adstype)) {
           handle.useLocalTimezone = (config.timezone === "TO_LOCAL")
         }
-        if (node.adsClient) {
+        if (twincat.adsClient) {
           debug('read:',handle)
-          node.adsClient.read(handle, function(err, handle){
+          twincat.adsClient.read(handle, function(err, handle){
             if (err) {
               n.error(util.format("Ads read '%s' %s",config.symname, err))
             } else {
@@ -379,8 +385,8 @@ module.exports = function (RED) {
       debug('internalRestart:','enter')
       internalSetConnectState(adsHelpers.connectState.DISCONNECTING)
       clearTimeout(conncetTimer)
-      if (node.adsClient) {
-        node.adsClient.end(function (){
+      if (twincat.adsClient) {
+        twincat.adsClient.end(function (){
           internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
           removeClient()
           var sleep = setTimeout(function () {
@@ -415,18 +421,18 @@ module.exports = function (RED) {
     /* symbols from PLC */
     node.getSymbols = function (force,cb) {
       debug('getSymbols:','enter')
-      if (!force && (node.symbolsCache)) {
+      if (!force && (twincat.symbolsCache)) {
         debug('getSymbols by cache')
-        cb(node.symbolsCache)
+        cb(twincat.symbolsCache)
       } else {
         if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
-          if (node.adsClient) {
-            node.adsClient.getSymbols( function (err, symbols){
+          if (twincat.adsClient) {
+            twincat.adsClient.getSymbols( function (err, symbols){
               debug('getSymbols:',err,symbols)
               if (err) {
                 n.error(util.format('Ads Symbols %s', err))
               } else {
-                node.symbolsCache = symbols
+                twincat.symbolsCache = symbols
                 cb(symbols)
               }
             }, true )
@@ -437,18 +443,18 @@ module.exports = function (RED) {
 
     node.getDatatyps = function (force,cb) {
       debug('getDatatyps:','enter')
-      if (!force && (node.datatypsCache)) {
+      if (!force && (twincat.datatypsCache)) {
         debug('getDatatyps by cache')
-        cb(node.datatypsCache)
+        cb(twincat.datatypsCache)
       } else {
         if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
-          if (node.adsClient) {
-            node.adsClient.getDatatyps( function (err, datatyps){
+          if (twincat.adsClient) {
+            twincat.adsClient.getDatatyps( function (err, datatyps){
               debug('getDatatyps:',err,datatyps)
               if (err) {
                 n.error(util.format('Ads Datatyps %s', err))
               } else {
-                node.datatypsCache = datatyps
+                twincat.datatypsCache = datatyps
                 cb(datatyps)
               }
             }, true )

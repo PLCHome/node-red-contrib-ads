@@ -2,6 +2,8 @@
 
 **Fixes**
 - Target & source port swapped in read.me #37
+- API (Twincat) not longer in the connection class, now it is global
+- Improves reconnect and lost network
 
 ### 1.1.26: Maintenance Release
 
