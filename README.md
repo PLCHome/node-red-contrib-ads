@@ -174,7 +174,10 @@ Enter the name of the variable, the type and the property name. If ads is connec
 If a topic is entered, the value is only sent if the topic is the same.
 
 There is an possible to override the node configuration. You can add an property config to the message object. Not all configuration properties need to be overridden.
+- `config.useIndex` : (boolen) override the variable use ID (true is not recommended for Twincat)
 - `config.varName`: (string) override the variable name
+- `config.indexGroup`: (interger/hex-string) override the variable indexGroup only used by useIndex varName is unused then
+- `config.indexOffset`: (interger/hex-string) override the variable indexOffset only used by useIndex varName is unused then
 - `config.varType`: (string) override the variable type
 - `config.varSize`: (integer) the length on RAW and STRING type
 - `config.timezone`: (string) only on date and time type 'TO_LOCAL' or 'UNCHANGED'
@@ -192,7 +195,10 @@ Enter the name of the variable, the type and the property name for the output.
 You can still decide whether a new output with the property for the value will be created or the property will be inserted into the inputvalue and output at the output.
 
 There is an possible to override the node configuration. You can add an property config to the message object. Not all configuration properties need to be overridden.
+- `config.useIndex` : (boolen) override the variable use ID (true is not recommended for Twincat)
 - `config.varName`: (string) override the variable name
+- `config.indexGroup`: (integer/hex-string) override the variable indexGroup only used by useIndex varName is unused then
+- `config.indexOffset`: (integer/hex-string) override the variable indexOffset only used by useIndex varName is unused then
 - `config.varType`: (string) override the variable type
 - `config.varSize`: (integer) the length on RAW and STRING type
 - `config.isarray`: (bool) is an ARRAY type, varLowIndex and varHighIndex must set

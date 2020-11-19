@@ -1,3 +1,8 @@
+### 1.1.28: Maintenance Release
+
+**Enhancements**
+- read/write/notification: ADS Read to indexOffset and indexGroup #33
+
 ### 1.1.27: Maintenance Release
 
 **Fixes**

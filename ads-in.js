@@ -22,17 +22,20 @@ module.exports = function (RED) {
       this.on("input", function(msg) {
         debug('input:',msg)
         var cfg = {
-         symname: config.varName,
-         adstype: config.varTyp,
-         bytelength: config.varSize,
-         array:config.isArray,
-         lowindex:config.varLowIndex,
-         highindex:config.varHighIndex,
-         timezone: config.timezone,
-         inValue: (config.inValue||'payload'),
-         useInputMsg: (config.useInputMsg||false),
-         //set topic by default to msg.topic
-         topic: (msg.topic||'')
+          useIndex: config.useIndex,
+          symname: config.varName,
+          indexGroup: config.indexGroup,
+          indexOffset: config.indexOffset,
+          adstype: config.varTyp,
+          bytelength: config.varSize,
+          array:config.isArray,
+          lowindex:config.varLowIndex,
+          highindex:config.varHighIndex,
+          timezone: config.timezone,
+          inValue: (config.inValue||'payload'),
+          useInputMsg: (config.useInputMsg||false),
+          //set topic by default to msg.topic
+          topic: (msg.topic||'')
         }
         // overwrite default msg.topic by value in topic property (if used) 
         if (String(config.topic).length > 0) {
@@ -42,6 +45,15 @@ module.exports = function (RED) {
         if (msg.config) {
           if (typeof msg.config.varName !== 'undefined') {
             cfg.symname = msg.config.varName
+          }
+          if (typeof msg.config.indexGroup !== 'undefined') {
+            cfg.indexGroup = msg.config.indexGroup
+          }
+          if (typeof msg.config.indexOffset !== 'undefined') {
+            cfg.indexOffset = msg.config.indexOffset
+          }
+          if (typeof msg.config.useIndex !== 'undefined') {
+            cfg.useIndex = msg.config.useIndex
           }
           if (typeof msg.config.varType !== 'undefined') {
             cfg.adstype = msg.config.varType
@@ -73,6 +85,21 @@ module.exports = function (RED) {
               cfg.topic = msg.config.topic
             } 
           }
+        }
+
+        if (cfg.useIndex) {
+          delete(cfg.symname)
+          cfg.indexGroup = parseInt(cfg.indexGroup.toString())
+          if (isNaA(cfg.indexGroup)) {
+            cfg.indexGroup = 0
+          }
+          cfg.indexOffset = parseInt(cfg.indexOffset.toString())
+          if (isNaA(cfg.indexOffset)) {
+            cfg.indexOffset = 0
+          }
+        } else {
+          delete(cfg.indexGroup)
+          delete(cfg.indexOffset)
         }
 
         cfg.hasTopic = String(cfg.topic).length > 0

@@ -3,7 +3,10 @@
 	<p><b>This note is not for the transmission of cyclic data. Do not use it in conjunction with a timer. There is a notification node for this.</b></p>
     <p>The data are fetched from the PLC when an object is transferred to the input. The entry data will be ignored.</p>
     <p>There is an possible to override the node configuration. You can add an property config to the message object. Not all configuration properties need to be overridden.</p>
+    <li>config.useIndex: (boolean) override the variable use ID (true is not recommended for Twincat)</li>
     <li>config.varName: (string) override the variable name</li>
+    <li>config.indexGroup: (integer/hex-string) override the variable indexGroup only used by useIndex varName is unused then</li>
+    <li>config.indexOffset: (integer/hex-string) override the variable indexOffset only used by useIndex varName is unused then</li>
     <li>config.varType: (string) override the variable type</li>
     <li>config.varSize: (integer) the length on RAW and STRING type</li>
     <li>config.isarray: (bool) is an ARRAY type, varLowIndex and varHighIndex must set</li>
@@ -20,9 +23,21 @@
         <label for="node-input-datasource"><i class="fa fa-random"></i> <span data-i18n="ads-in.label.datasource"></span></label>
         <input type="text" id="node-input-datasource">
     </div>
-    <div class="form-row">
+    <div class="form-row" id="node-row-useIndex">
+        <input type="checkbox" id="node-input-useIndex" style="display: inline-block; width: auto; vertical-align: text-bottom;" autocomplete="off">
+        <label for="node-input-useIndex"><span data-i18n="ads-in.label.useIndex"></span></label>
+    </div>
+    <div id="node-row-varName" class="form-row">
         <label for="node-input-varName"><i class="fa fa-tag"></i> <span data-i18n="ads-in.label.varName"></span></label>
         <input type="text" id="node-input-varName" data-i18n="[placeholder]ads-in.placeholder.varName">
+    </div>
+    <div id="node-row-indexGroup" class="form-row">
+        <label for="node-input-indexGroup"><i class="fa fa-tag"></i> <span data-i18n="ads-in.label.indexGroup"></span></label>
+        <input type="text" id="node-input-indexGroup" data-i18n="[placeholder]ads-in.placeholder.indexGroup">
+    </div>
+    <div id="node-row-indexOffset" class="form-row">
+        <label for="node-input-indexOffset"><i class="fa fa-tag"></i> <span data-i18n="ads-in.label.indexOffset"></span></label>
+        <input type="text" id="node-input-indexOffset" data-i18n="[placeholder]ads-in.placeholder.indexOffset">
     </div>
     <div class="form-row">
         <label for="node-input-varTyp"><i class="fa fa-code"></i> <span data-i18n="ads-in.label.varTyp"></span></label>
@@ -103,9 +118,20 @@
                 type: "ads-connection",
                 required: true
             },
+            useIndex: {
+                value: false
+            },
             varName: {
                 value: "",
-                required: true
+                validate: function (val) {return ($("#node-input-useIndex").prop('checked')||val!="")}
+            },
+            indexGroup: {
+                value: "",
+                validate: function (val) {return (!($("#node-input-useIndex").prop('checked'))||/^((0[xX][0-9A-Fa-f]+)|([0-9]+))$/.test(val))}
+            },
+            indexOffset: {
+                value: "",
+                validate: function (val) {return (!($("#node-input-useIndex").prop('checked'))||/^((0[xX][0-9A-Fa-f]+)|([0-9]+))$/.test(val))}
             },
             varTyp: {
                 value: "",
@@ -201,7 +227,17 @@
                      $("#node-row-varHighIndex").hide();
                   }
               }); 
-
+          $('#node-input-useIndex[type="checkbox"]').change(function() {
+                  if (this.checked) {                    
+                      $("#node-row-varName").hide();
+                      $("#node-row-indexGroup").show();
+                      $("#node-row-indexOffset").show();
+                  } else {
+                     $("#node-row-varName").show();
+                     $("#node-row-indexGroup").hide();
+                     $("#node-row-indexOffset").hide();
+                  }
+              }); 
         }
     });
     

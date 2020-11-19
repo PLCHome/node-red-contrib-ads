@@ -204,11 +204,16 @@ module.exports = function (RED) {
     function internalSubscribe(n){
       debug('internalSubscribe:',n.id, n.type)
       var handle =  {
-        symname: n.symname,
         transmissionMode: nodeads.NOTIFY[n.transmissionMode],
         maxDelay: n.maxDelay,
         cycleTime: n.cycleTime,
-        }
+      }
+      if (n.useIndex) {
+        handle.indexGroup = n.indexGroup
+        handle.indexOffset = n.indexOffset
+      } else {
+        handle.symname = n.symname
+      }
       if (adsHelpers.isRawType(n.adstype)) {
         handle.bytelength = parseInt(n.bytelength)
       } else {
@@ -302,9 +307,14 @@ module.exports = function (RED) {
       debug('write:',n.id, n.type)
       if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
-          symname: config.symname,
           propname: 'value',
           value: value
+        }
+        if (config.useIndex) {
+          handle.indexGroup = config.indexGroup
+          handle.indexOffset = config.indexOffset
+        } else {
+          handle.symname = config.symname
         }
         if (adsHelpers.isRawType(config.adstype)) {
           handle.bytelength = parseInt(config.bytelength)
@@ -336,8 +346,13 @@ module.exports = function (RED) {
       debug('read:',n.id, n.type)
       if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
         var handle =  {
-          symname: config.symname,
           propname: 'value'
+        }
+        if (config.useIndex) {
+          handle.indexGroup = config.indexGroup
+          handle.indexOffset = config.indexOffset
+        } else {
+          handle.symname = config.symname
         }
         if (adsHelpers.isRawType(config.adstype)) {
           handle.bytelength = parseInt(config.bytelength)

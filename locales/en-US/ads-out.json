@@ -2,7 +2,10 @@
   "ads-out": {
       "label": {
           "datasource": "Datasource",
+          "useIndex": "use index",
           "varName": "variable name",
+          "indexGroup": "index group",
+          "indexOffset": "index offset",
           "varTyp": "variable type",
           "outValue": "property",
           "varSize": "size in byte",
@@ -11,6 +14,8 @@
       },
       "placeholder": {
           "varName": ".var",
+          "indexGroup": "15 or 0xF",
+          "indexOffset": "15 or 0xF",
           "outValue": "payload",
           "varSize": "byte",
           "topic": "enter a topic"

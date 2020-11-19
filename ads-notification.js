@@ -9,7 +9,10 @@ module.exports = function (RED) {
 
     node.adsDatasource = RED.nodes.getNode(config.datasource)
     if (node.adsDatasource) {
-      node.symname = config.varName
+      node.useIndex = config.useIndex,
+      node.symname = config.varName,
+      node.indexGroup = config.indexGroup,
+      node.indexOffset = config.indexOffset,
       node.adstype = config.varTyp
       node.bytelength = config.varSize
       node.array = config.isArray
@@ -22,6 +25,21 @@ module.exports = function (RED) {
       node.property = config.property||'payload'
       node.topic = config.topic||''
       node.hasTopic = String(node.topic).length > 0
+      if (node.useIndex) {
+        delete(node.symname)
+        node.indexGroup = parseInt(node.indexGroup.toString())
+        if (isNaA(node.indexGroup)) {
+          node.indexGroup = 0
+        }
+        node.indexOffset = parseInt(node.indexOffset.toString())
+        if (isNaA(node.indexOffset)) {
+          node.indexOffset = 0
+        }
+      } else {
+        delete(node.indexGroup)
+        delete(node.indexOffset)
+      }
+
       debug('config:',node)
 
       node.onAdsData = function (handle){
