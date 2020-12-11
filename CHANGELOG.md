@@ -1,3 +1,8 @@
+### 1.1.29: Maintenance Release
+
+**Fixes**
+- Improvement for connect, disconnect and deploy
+
 ### 1.1.28: Maintenance Release
 
 **Enhancements**

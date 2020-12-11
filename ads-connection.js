@@ -60,7 +60,7 @@ module.exports = function (RED) {
                 removeClient()
                 node.error('Error on connect: check target NetId or routing')
                 internalSetConnectState(adsHelpers.connectState.ERROR)
-                startTimer(20000)
+                startTimer(120000)
                 debug('connect:','readDeviceInfo:',err)
               } else {
                 debug('connect:','readDeviceInfo:',handel)
@@ -71,9 +71,15 @@ module.exports = function (RED) {
                 node.system.deviceName = handel.deviceName
                 internalSystemUpdate()
                 internalSubscribeLiveTick()
-                startTimer(10000)
+                startTimer(120000)
                 internalSubscribeSymTab()
-                node.notificationNodes.forEach(internalSubscribe)
+                function subscribe(i,cb){
+                  if (i<node.notificationNodes.length) {
+                    internalSubscribe(node.notificationNodes[i],()=>{subscribe(++i,cb)})
+                  } else cb()
+                }
+                subscribe(0,()=>{internalSetConnectState(adsHelpers.connectState.CONNECTED)})
+                //node.notificationNodes.forEach(internalSubscribe)
                 internalSetConnectState(adsHelpers.connectState.CONNECTED)
               }
             })
@@ -123,10 +129,12 @@ module.exports = function (RED) {
           debug('onerror:',error)
           if (error){
             node.error(util.format('Error ADS: %s', error))
-            if (node.system.connectState == adsHelpers.connectState.CONNECTING) {
-              internalSetConnectState(adsHelpers.connectState.ERROR)
+            if (!twincat.connected) {
+              if (node.system.connectState == adsHelpers.connectState.CONNECTING) {
+                internalSetConnectState(adsHelpers.connectState.ERROR)
+              }
+              internalRestart(() => {startTimer(60000)})
             }
-            internalRestart(() => {startTimer(60000)})
           }
         }
       )
@@ -193,15 +201,24 @@ module.exports = function (RED) {
               cb()
             }
           })
+        } else {
+          debug('unsubscribe: twincat.adsClient deleted')
+          if (cb){
+            cb()
+          }
         }
       } else {
-        debug('unsubscribe: wait')
+        debug('unsubscribe: cat release handle:',notifyHandle)
+        if (cb){
+          cb()
+        }
       }
-    }
+  }
+    
     /* end for ads-notification */
 
     /* subscribe on PLC */
-    function internalSubscribe(n){
+    function internalSubscribe(n,cb){
       debug('internalSubscribe:',n.id, n.type)
       var handle =  {
         transmissionMode: nodeads.NOTIFY[n.transmissionMode],
@@ -247,8 +264,11 @@ module.exports = function (RED) {
                 no.notifyHandle = handle.notifyHandle
               })
             }
+            if (cb){
+              cb()
+            }
           })
-        }
+        } else if (cb) cb()
       } else {
         var index = node.notificationSubscribed[n.symname].push(n)
         debug('internalSubscribe: reuse notifyHandle',node.notificationSubscribed[n.symname][0].notifyHandle)
@@ -259,6 +279,7 @@ module.exports = function (RED) {
             }
           })
         }
+        if (cb) cb()
       }
     }
 
@@ -391,8 +412,6 @@ module.exports = function (RED) {
     /* node RIP */
     node.on('close', function (done) {
       debug('close:')
-      node.notificationNodes = []
-      node.systemNodes = []
       internalRestart(done)
     })
 
@@ -401,7 +420,9 @@ module.exports = function (RED) {
       internalSetConnectState(adsHelpers.connectState.DISCONNECTING)
       clearTimeout(conncetTimer)
       if (twincat.adsClient) {
-        twincat.adsClient.end(function (){
+        let ads = twincat.adsClient
+        delete(twincat.adsClient)
+        ads.end(function (){
           internalSetConnectState(adsHelpers.connectState.DISCONNECTED)
           removeClient()
           var sleep = setTimeout(function () {

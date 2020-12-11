@@ -76,9 +76,9 @@ module.exports = function (RED) {
 
       node.adsDatasource.subscribe(node)
 
-      node.on('close', function () {
+      node.on('close', function (done) {
         debug('close:','enter')
-        node.adsDatasource.unsubscribe(node)
+        node.adsDatasource.unsubscribe(node,done)
       })
 
     }
