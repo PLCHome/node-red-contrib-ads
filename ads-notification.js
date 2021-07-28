@@ -28,11 +28,11 @@ module.exports = function (RED) {
       if (node.useIndex) {
         delete(node.symname)
         node.indexGroup = parseInt(node.indexGroup.toString())
-        if (isNaA(node.indexGroup)) {
+        if (isNaN(node.indexGroup)) {
           node.indexGroup = 0
         }
         node.indexOffset = parseInt(node.indexOffset.toString())
-        if (isNaA(node.indexOffset)) {
+        if (isNaN(node.indexOffset)) {
           node.indexOffset = 0
         }
       } else {
