@@ -90,11 +90,11 @@ module.exports = function (RED) {
         if (cfg.useIndex) {
           delete(cfg.symname)
           cfg.indexGroup = parseInt(cfg.indexGroup.toString())
-          if (isNaA(cfg.indexGroup)) {
+          if (isNaN(cfg.indexGroup)) {
             cfg.indexGroup = 0
           }
           cfg.indexOffset = parseInt(cfg.indexOffset.toString())
-          if (isNaA(cfg.indexOffset)) {
+          if (isNaN(cfg.indexOffset)) {
             cfg.indexOffset = 0
           }
         } else {
