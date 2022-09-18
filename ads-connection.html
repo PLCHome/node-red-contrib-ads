@@ -72,12 +72,16 @@
             amsNetIdTarget: {
                 value: '',
                 required: true,
-                validate: checkIP
+                validate: function(val){ var ok = checkIP(val,6);
+                                         return ok;
+                                       }
             },
             amsNetIdSource: {
                 value: '',
                 required: true,
-                validate: checkIP
+                validate: function(val){ var ok = checkIP(val,6);
+                                         return ok;
+                                       }
             },
             port: {
                 value: 48898,

@@ -1,3 +1,8 @@
+### 1.1.30: Maintenance Release
+
+**Fixes**
+- Improvement for check ads netID
+
 ### 1.1.29: Maintenance Release
 
 **Fixes**
