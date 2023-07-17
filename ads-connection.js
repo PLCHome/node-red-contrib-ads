@@ -28,6 +28,20 @@ module.exports = function (RED) {
       delete(twincat.symbolsCache)
       delete(twincat.datatypsCache)
     }
+
+    function callbackSafeIfStillConnected(adsClient, cb) {
+      return function() {
+        if (twincat.adsClient !== adsClient) {
+          return;
+        }
+
+        try {
+          return cb(...arguments);
+        } catch (ex) {
+          node.error(ex);
+        }
+      };
+    };
     
     /* connect to PLC */
     function connect() {
@@ -55,7 +69,7 @@ module.exports = function (RED) {
       } else {
         twincat.adsClient = nodeads.connect(adsoptions,
           function (){
-            twincat.adsClient.readDeviceInfo(function (err,handel) {
+            twincat.adsClient.readDeviceInfo(callbackSafeIfStillConnected(twincat.adsClient, function (err,handel) {
               if (err) {
                 removeClient()
                 node.error('Error on connect: check target NetId or routing')
@@ -82,12 +96,12 @@ module.exports = function (RED) {
                 //node.notificationNodes.forEach(internalSubscribe)
                 internalSetConnectState(adsHelpers.connectState.CONNECTED)
               }
-            })
+            }))
           }
         )
       }
 
-      twincat.adsClient.on('notification', function (handle){
+      twincat.adsClient.on('notification', callbackSafeIfStillConnected(twincat.adsClient, function (handle){
           if (handle.indexGroup == nodeads.ADSIGRP.DEVICE_DATA &&
               handle.indexOffset == nodeads.ADSIOFFS_DEVDATA.ADSSTATE) {
             debugCyclic('notification:','connectCheckADSSTATE:', handle.indexGroup, handle.indexGroup, 
@@ -122,10 +136,10 @@ module.exports = function (RED) {
             })
           }
         }
-      )
+      ))
 
 
-      twincat.adsClient.on('error', function (error) {
+      twincat.adsClient.on('error', callbackSafeIfStillConnected(twincat.adsClient, function (error) {
           debug('onerror:',error)
           if (error){
             node.error(util.format('Error ADS: %s', error))
@@ -137,7 +151,7 @@ module.exports = function (RED) {
             }
           }
         }
-      )
+      ))
 
     }
     /* end connect to PLC */
@@ -256,7 +270,7 @@ module.exports = function (RED) {
           debug('internalSubscribe:',handle)
           node.notificationSubscribed[n.symname]=[]
           node.notificationSubscribed[n.symname].push(n)
-          twincat.adsClient.notify(handle, function(err){
+          twincat.adsClient.notify(handle, callbackSafeIfStillConnected(twincat.adsClient, function(err){
             if (err){
               n.error(util.format("Ads Register Notification '%s' %s",n.symname, err))
             } else {
@@ -267,7 +281,7 @@ module.exports = function (RED) {
             if (cb){
               cb()
             }
-          })
+          }))
         } else if (cb) cb()
       } else {
         var index = node.notificationSubscribed[n.symname].push(n)
@@ -463,7 +477,7 @@ module.exports = function (RED) {
       } else {
         if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
           if (twincat.adsClient) {
-            twincat.adsClient.getSymbols( function (err, symbols){
+            twincat.adsClient.getSymbols(callbackSafeIfStillConnected(twincat.adsClient, function (err, symbols){
               debug('getSymbols:',err,symbols)
               if (err) {
                 n.error(util.format('Ads Symbols %s', err))
@@ -471,7 +485,7 @@ module.exports = function (RED) {
                 twincat.symbolsCache = symbols
                 cb(symbols)
               }
-            }, true )
+            }, true ))
           }
         }
       }
@@ -485,7 +499,7 @@ module.exports = function (RED) {
       } else {
         if (node.system.connectState == adsHelpers.connectState.CONNECTED) {
           if (twincat.adsClient) {
-            twincat.adsClient.getDatatyps( function (err, datatyps){
+            twincat.adsClient.getDatatyps(callbackSafeIfStillConnected(twincat.adsClient, function (err, datatyps){
               debug('getDatatyps:',err,datatyps)
               if (err) {
                 n.error(util.format('Ads Datatyps %s', err))
@@ -493,7 +507,7 @@ module.exports = function (RED) {
                 twincat.datatypsCache = datatyps
                 cb(datatyps)
               }
-            }, true )
+            }, true ))
           }
         }
       }
